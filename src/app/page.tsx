@@ -295,7 +295,7 @@ export default function Home() {
                     Foco principal: Java e infraestrutura.
                   </p>
                   <div className="flex flex-wrap gap-3">
-                    <a href="/resume.pdf" className="link-simple" download>
+                    <a href="/Victor-Resume.pdf" className="link-simple" download>
                       Baixar PDF
                     </a>
                   </div>
