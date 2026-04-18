@@ -198,8 +198,12 @@ export default function Home() {
       <header className="fixed top-0 w-full z-20 bg-[rgba(2,12,27,0.75)] backdrop-blur border-b border-[var(--line-soft)]">
         <nav className="max-w-6xl mx-auto flex items-center justify-between px-5 sm:px-8 py-4">
           <div className="flex items-center gap-3">
-            <span className="h-9 w-9 rounded-full bg-[var(--accent)]/20 border border-[var(--line-strong)] grid place-items-center text-sm font-semibold text-[var(--accent)]">
-              VK
+            <span className="h-9 w-9 rounded-full bg-[var(--accent)]/20 border border-[var(--line-strong)] grid place-items-center overflow-hidden">
+              <img
+                src="/ea9e27d6-dbae-480c-bd4b-f10d7463b5a4.JPG"
+                alt="Victor Kangombe"
+                className="h-full w-full object-cover"
+              />
             </span>
             <div>
               <p className="text-sm tracking-[0.2em] text-[var(--accent)] uppercase">
@@ -377,6 +381,15 @@ export default function Home() {
                             Ensino medio em Ciências Físicas E Biológicas · 2020
                             - 2022
                           </p>
+                        </div>
+                      </div>
+                      <div className="mt-6">
+                        <p className="text-xs uppercase tracking-[0.3em] text-[var(--text-dim)]">
+                          Idiomas
+                        </p>
+                        <div className="mt-2 space-y-2 text-sm text-[var(--text-dim)]">
+                          <p>Portugues · nativo</p>
+                          <p>Ingles · intermediario</p>
                         </div>
                       </div>
                     </div>
