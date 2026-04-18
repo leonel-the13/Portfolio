@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Meu Portfólio",
-  description: "Portfólio pessoal desenvolvido com Next.js",
+  title: "Victor Kangombe — Cyber DevOps Command Center",
+  description:
+    "Portfolio de Backend e DevOps com foco em Java, Spring e infraestrutura.",
 };
 
 export default function RootLayout({
