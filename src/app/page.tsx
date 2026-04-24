@@ -1,15 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import {
   siC,
   siCplusplus,
-  siCloudflare,
   siDart,
   siDocker,
   siGit,
-  siJavascript,
   siMysql,
   siNestjs,
   siNginx,
@@ -20,119 +18,43 @@ import {
   siRedis,
   siSpringboot,
   siTypescript,
+  siLinux,
+  siGithub,
 } from "simple-icons";
 
+/* ─── Constants ─── */
 const CONTACT_EMAIL = "vicor32leonel@gmail.com";
 const CONTACT_LINKEDIN = "https://linkedin.com/in/victor-kangombe/";
 const CONTACT_GITHUB = "https://github.com/leonel-the13";
-const MATRIX_CHARS = "01#@$%*ABCDEF";
-const MATRIX_COLUMNS = 18;
+const MATRIX_CHARS = "01アイウエオカキクケコサシスセソ";
+const MATRIX_COLUMNS = 24;
 
-const PROJECTS = [
-  {
-    name: "Black Hole Academy",
-    summary:
-      "Contribuicao no backend com Java 17 e Spring Boot, com foco em APIs e infraestrutura.",
-    stack: ["Java 17", "Spring Boot", "PostgreSQL", "Docker", "WAF"],
-    flow: ["API", "Servico", "DB", "Redis", "ELK", "Nginx", "Observabilidade"],
-  },
-  {
-    name: "InfraWatch",
-    summary:
-      "Backend de monitoramento em tempo real com alertas, SLA e WebSockets.",
-    stack: ["NestJS", "PostgreSQL", "Prisma"],
-    flow: ["Servicos", "Alertas", "Metricas", "SLA"],
-  },
-  {
-    name: "Cesta Digital",
-    summary: "Backend com autenticacao, doacoes em tempo real e monitoramento.",
-    stack: ["NestJS", "Prisma", "Redis"],
-    flow: ["Auth", "Campanhas", "Doacoes", "Cache"],
-  },
-  {
-    name: "Mapa de Turismo Acessivel",
-    summary: "Plataforma web com mapa interativo, filtros e API Flask.",
-    stack: ["Python", "Flask", "Folium"],
-    flow: ["Dados", "API", "Mapa", "KPIs"],
-  },
-  {
-    name: "Inception",
-    summary: "Infra orquestrada: NGINX, WordPress e MariaDB isolados.",
-    stack: ["Docker", "NGINX", "MariaDB", "Docker Compose"],
-    flow: ["NGINX", "WordPress", "DB"],
-  },
-  {
-    name: "Webserver",
-    summary: "HTTP engine com parsing manual, sockets e responses tipadas.",
-    stack: ["C++ 98", "Sockets", "HTTP/1.1"],
-    flow: ["Cliente", "Parser", "Roteador", "Resposta"],
-  },
-  {
-    name: "Born2beroot",
-    summary: "Hardening Linux, permissao e politicas de seguranca.",
-    stack: ["Linux", "Seguranca", "SSH"],
-    flow: ["Politicas", "Usuarios", "Auditoria"],
-  },
-];
-
-const HACKATHONS = [
-  {
-    year: "2026",
-    position: "1o Lugar",
-    competition: "Hackathon OSTJA",
-    scope: "Nacional",
-  },
-  {
-    year: "2025",
-    position: "2o Lugar",
-    competition: "Africell Code Fast",
-    scope: "Nacional",
-  },
-  {
-    year: "2025",
-    position: "3o Lugar",
-    competition: "NASA Space Apps Challenge",
-    scope: "Internacional",
-  },
-  {
-    year: "2023",
-    position: "3o Lugar",
-    competition: "ISPTEC Programming Competition",
-    scope: "Universidade",
-  },
-];
-
-const ORBIT_ICONS = [
-  { label: "Java", icon: siOpenjdk },
-  { label: "C", icon: siC },
-  { label: "C++", icon: siCplusplus },
-  { label: "JavaScript", icon: siJavascript },
-  { label: "TypeScript", icon: siTypescript },
-  { label: "Python", icon: siPython },
-  { label: "Dart", icon: siDart },
-  { label: "Spring Boot", icon: siSpringboot },
-  { label: "Node.js", icon: siNodedotjs },
-  { label: "NestJS", icon: siNestjs },
-  { label: "PostgreSQL", icon: siPostgresql },
-  { label: "MySQL", icon: siMysql },
-  { label: "Redis", icon: siRedis },
-  { label: "Docker", icon: siDocker },
-  { label: "NGINX", icon: siNginx },
-  { label: "WAF", icon: siCloudflare },
-  { label: "Git", icon: siGit },
-];
-
-const motionContainer = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.12, delayChildren: 0.1 },
-  },
+/* ─── Types ─── */
+type Project = {
+  name: string;
+  description: string;
+  stack: string[];
+  images: string[];
+  github?: string;
+  live?: string;
 };
 
-const motionItem = {
-  hidden: { opacity: 0, y: 18 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+type HackathonMember = {
+  name: string;
+  linkedin?: string;
+};
+
+type Hackathon = {
+  title: string;
+  position: string;
+  positionClass: "gold" | "silver" | "bronze";
+  year: string;
+  scope: string;
+  image: string;
+  gallery: string[];
+  description: string;
+  team: "solo" | "team";
+  members?: HackathonMember[];
 };
 
 type MatrixColumn = {
@@ -143,590 +65,998 @@ type MatrixColumn = {
   delay: string;
 };
 
-const createMatrixColumns = (): MatrixColumn[] =>
-  Array.from({ length: MATRIX_COLUMNS }, (_, index) => {
-    const streamLength = 36 + Math.floor(Math.random() * 16);
-    const stream = Array.from({ length: streamLength }, () => {
-      return MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)];
-    }).join("");
+/* ─── Data ─── */
+const TECH_STACK = [
+  { label: "Java", icon: siOpenjdk },
+  { label: "TypeScript", icon: siTypescript },
+  { label: "C++", icon: siCplusplus },
+  { label: "C", icon: siC },
+  { label: "Python", icon: siPython },
+  { label: "Dart", icon: siDart },
+  { label: "Spring Boot", icon: siSpringboot },
+  { label: "Node.js", icon: siNodedotjs },
+  { label: "NestJS", icon: siNestjs },
+  { label: "PostgreSQL", icon: siPostgresql },
+  { label: "MySQL", icon: siMysql },
+  { label: "Redis", icon: siRedis },
+  { label: "Docker", icon: siDocker },
+  { label: "NGINX", icon: siNginx },
+  { label: "Git", icon: siGit },
+  { label: "GitHub", icon: siGithub },
+  { label: "Linux", icon: siLinux },
+];
 
+const PROJECTS: Project[] = [
+  {
+    name: "Black Hole Academy",
+    description:
+      "Backend contribution with Java 17 and Spring Boot, focused on REST APIs, JWT authentication, and containerized infrastructure with Docker and NGINX.",
+    stack: ["Java 17", "Spring Boot", "PostgreSQL", "Docker", "WAF"],
+    images: ["/projects/black-hole-academy/cover.png"],
+  },
+  {
+    name: "Cesta Digital",
+    description:
+      "Donation platform backend with authentication, real-time campaign tracking, Redis caching, and monitoring.",
+    stack: ["NestJS", "Prisma", "Redis", "JWT"],
+    images: ["/projects/cesta-digital/cover.png"],
+  },
+  {
+    name: "Accessible Tourism Map",
+    description:
+      "Web platform with interactive map, accessibility filters, and Flask API serving geo-data with KPI dashboards.",
+    stack: ["Python", "Flask", "Folium", "Leaflet"],
+    images: ["/projects/tourism-map/cover.png"],
+    github: "https://github.com/leonel-the13/MTA",
+  },
+  {
+    name: "Inception",
+    description:
+      "Orchestrated infrastructure: NGINX, WordPress, and MariaDB running in isolated Docker containers with custom networking.",
+    stack: ["Docker", "NGINX", "MariaDB", "Docker Compose"],
+    images: ["/projects/inception/cover.png"],
+    github: "https://github.com/leonel-the13/inseption",
+  },
+  {
+    name: "Webserver",
+    description:
+      "HTTP engine built from scratch with manual parsing, raw sockets, and typed responses. Compliant with HTTP/1.1.",
+    stack: ["C++ 98", "Sockets", "HTTP/1.1"],
+    images: ["/projects/webserver/cover.png"],
+  },
+  {
+    name: "Born2beroot",
+    description:
+      "Linux hardening project: user permissions, SSH configuration, firewall rules, and security policies.",
+    stack: ["Linux", "Security", "SSH", "UFW"],
+    images: ["/projects/born2beroot/cover.png"],
+  },
+];
+
+const HACKATHONS: Hackathon[] = [
+  {
+    title: "Hackathon OSTJA",
+    position: "1st Place",
+    positionClass: "gold",
+    year: "2026",
+    scope: "National",
+    image: "/hackathons/hackathon-ostja/cover.jpg",
+    gallery: [],
+    description:
+      "National hackathon organized by OSTJA. Developed a full solution addressing real-world infrastructure challenges.",
+    team: "team",
+    members: [
+      {
+        name: "Vicor Kangombe",
+      },
+      {
+        name: "Joisson Miguel",
+        linkedin: "https://www.linkedin.com/in/joisson-miguel",
+      },
+      {
+        name: "Oriza Ebo",
+        linkedin: "https://www.linkedin.com/in/orisa-melzira-ebo-aab95a267",
+      },
+      {
+        name: "Willfredy Vieira Dias",
+        linkedin: "https://www.linkedin.com/in/willfredy-vieira-dias",
+      },
+      {
+        name: "Jessé Inglês",
+        linkedin: "https://www.linkedin.com/in/jess%C3%A9ingl%C3%AAs",
+      },
+      {
+        name: "Sebastião Sukuakueche  ",
+        linkedin: "https://www.linkedin.com/in/sebastiao-sukuakueche",
+      },
+    ],
+  },
+  {
+    title: "Africell Code Fast",
+    position: "2nd Place",
+    positionClass: "silver",
+    year: "2025",
+    scope: "National",
+    image: "/hackathons/africell-code-fast/cover.JPEG",
+    gallery: [],
+    description:
+      "Speed coding competition sponsored by Africell. System Design, Build and Debug.",
+    team: "solo",
+    members: [],
+  },
+  {
+    title: "NASA Space Apps Challenge",
+    position: "3rd Place",
+    positionClass: "bronze",
+    year: "2025",
+    scope: "International",
+    image: "/hackathons/nasa-space-apps/cover.png",
+    gallery: [],
+    description:
+      "International hackathon by NASA. Worked on a solution leveraging open data for space and earth science applications.",
+    team: "team",
+    members: [
+      { name: "Vicor Kangombe" },
+      {
+        name: "Oriza Ebo",
+        linkedin: "https://www.linkedin.com/in/orisa-melzira-ebo-aab95a267",
+      },
+      {
+        name: "Ângela Amaro",
+        linkedin: "https://www.linkedin.com/in/angeamaro",
+      },
+      {
+        name: "Reinaldo Sambing",
+        linkedin: "https://www.linkedin.com/in/rsambing",
+      },
+      {
+        name: "Paulo Gaspar",
+        linkedin: "https://www.linkedin.com/in/opaulogaspar",
+      },
+      {
+        name: "Nuno Mendes",
+        linkedin: "https://www.linkedin.com/in/nuno-mendes-07a259253",
+      },
+    ],
+  },
+  {
+    title: "ISPTEC Programming Competition",
+    position: "3rd Place",
+    positionClass: "bronze",
+    year: "2023",
+    scope: "University",
+    image: "/hackathons/isptec-programming/cover.jpg",
+    gallery: [],
+    description:
+      "Competitive programming contest at ISPTEC university, focused on algorithms and problem-solving.",
+    team: "team",
+    members: [
+      { name: "Vicor Kangombe" },
+      {
+        name: "Reinaldo Sambing",
+        linkedin: "https://www.linkedin.com/in/rsambing",
+      },
+      {
+        name: "Jorge Carvalho",
+        linkedin: "https://www.linkedin.com/in/jorge-de-carvalho-366899333",
+      },
+    ],
+  },
+];
+
+/* ─── Animations ─── */
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+  },
+};
+
+/* ─── Matrix Helpers ─── */
+const createMatrixColumns = (): MatrixColumn[] =>
+  Array.from({ length: MATRIX_COLUMNS }, (_, i) => {
+    const len = 20 + Math.floor(Math.random() * 20);
+    const stream = Array.from(
+      { length: len },
+      () => MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)],
+    ).join("");
     return {
-      id: `matrix-${index}`,
+      id: `m-${i}`,
       stream,
-      left: `${index * (100 / MATRIX_COLUMNS)}%`,
-      duration: `${10 + Math.random() * 8}s`,
-      delay: `${Math.random() * 8}s`,
+      left: `${(i / MATRIX_COLUMNS) * 100}%`,
+      duration: `${12 + Math.random() * 10}s`,
+      delay: `${Math.random() * 10}s`,
     };
   });
 
+/* ─── Subcomponents ─── */
+
+function ProjectCarousel({ images }: { images: string[] }) {
+  const [current, setCurrent] = useState(0);
+  const [hasError, setHasError] = useState<Record<number, boolean>>({});
+
+  useEffect(() => {
+    if (images.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrent((c) => (c + 1) % images.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [images.length]);
+
+  const showPlaceholder = images.length === 0 || hasError[current];
+
+  if (showPlaceholder) {
+    return (
+      <div className="project-carousel">
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            background:
+              "linear-gradient(135deg, var(--bg-primary), var(--bg-elevated))",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "var(--text-tertiary)",
+            fontSize: "0.8125rem",
+            fontFamily: "var(--font-mono)",
+          }}
+        >
+          <span style={{ opacity: 0.6 }}>{"< no preview />"}</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="project-carousel">
+      <img
+        src={images[current]}
+        alt="Project screenshot"
+        onError={() => setHasError((prev) => ({ ...prev, [current]: true }))}
+      />
+      {images.length > 1 && (
+        <>
+          <button
+            className="project-carousel-nav prev"
+            onClick={(e) => {
+              e.stopPropagation();
+              setCurrent((c) => (c - 1 + images.length) % images.length);
+            }}
+            aria-label="Previous image"
+          >
+            ‹
+          </button>
+          <button
+            className="project-carousel-nav next"
+            onClick={(e) => {
+              e.stopPropagation();
+              setCurrent((c) => (c + 1) % images.length);
+            }}
+            aria-label="Next image"
+          >
+            ›
+          </button>
+          <div className="project-carousel-dots">
+            {images.map((_, i) => (
+              <button
+                key={i}
+                className={`project-carousel-dot ${i === current ? "active" : ""}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrent(i);
+                }}
+                aria-label={`Go to image ${i + 1}`}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function HackathonModal({
+  hackathon,
+  onClose,
+}: {
+  hackathon: Hackathon;
+  onClose: () => void;
+}) {
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handler);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handler);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <div>
+            <h3 style={{ fontSize: "1.0625rem", fontWeight: 600 }}>
+              {hackathon.title}
+            </h3>
+            <p
+              style={{
+                fontSize: "0.8125rem",
+                color: "var(--text-tertiary)",
+                marginTop: "0.125rem",
+              }}
+            >
+              {hackathon.year} · {hackathon.scope}
+            </p>
+          </div>
+          <button className="modal-close" onClick={onClose} aria-label="Close">
+            ×
+          </button>
+        </div>
+        <div className="modal-body">
+          {hackathon.gallery.length > 0 && (
+            <div className="modal-gallery">
+              {hackathon.gallery.map((img, i) => (
+                <img key={i} src={img} alt={`${hackathon.title} ${i + 1}`} />
+              ))}
+            </div>
+          )}
+          <p
+            style={{
+              fontSize: "0.9375rem",
+              color: "var(--text-secondary)",
+              lineHeight: 1.7,
+            }}
+          >
+            {hackathon.description}
+          </p>
+          <div className="modal-meta">
+            <span className="modal-meta-item">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+              </svg>
+              {hackathon.position}
+            </span>
+            <span className="modal-meta-item">
+              {hackathon.team === "solo" ? "Solo" : "Team"}
+            </span>
+            <span className="modal-meta-item">{hackathon.scope}</span>
+          </div>
+          {hackathon.team === "team" &&
+            hackathon.members &&
+            hackathon.members.length > 0 && (
+              <div className="modal-members">
+                <p className="modal-members-title">Team Members</p>
+                {hackathon.members.map((member, i) => (
+                  <div key={i} className="modal-member">
+                    <span>{member.name}</span>
+                    {member.linkedin && (
+                      <a
+                        href={member.linkedin}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        LinkedIn →
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Icons (inline SVG) ─── */
+const GithubIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+  </svg>
+);
+
+const ExternalIcon = () => (
+  <svg
+    width="13"
+    height="13"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+    <polyline points="15 3 21 3 21 9" />
+    <line x1="10" y1="14" x2="21" y2="3" />
+  </svg>
+);
+
+const MailIcon = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="2" y="4" width="20" height="16" rx="2" />
+    <path d="M22 7l-10 7L2 7" />
+  </svg>
+);
+
+const LinkedInIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+  </svg>
+);
+
+const MenuIcon = () => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+  >
+    <line x1="3" y1="6" x2="21" y2="6" />
+    <line x1="3" y1="12" x2="21" y2="12" />
+    <line x1="3" y1="18" x2="21" y2="18" />
+  </svg>
+);
+
+const CloseIcon = () => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+  >
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+);
+
+const DownloadIcon = () => (
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+    <polyline points="7 10 12 15 17 10" />
+    <line x1="12" y1="15" x2="12" y2="3" />
+  </svg>
+);
+
+/* ─── Main Component ─── */
 export default function Home() {
   const [matrixColumns, setMatrixColumns] = useState<MatrixColumn[]>([]);
-  const [projectPage, setProjectPage] = useState(1);
-  const projectsPerPage = 4;
-  const totalProjectPages = Math.max(
-    1,
-    Math.ceil(PROJECTS.length / projectsPerPage),
-  );
-  const projectStart = (projectPage - 1) * projectsPerPage;
-  const visibleProjects = PROJECTS.slice(
-    projectStart,
-    projectStart + projectsPerPage,
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [selectedHackathon, setSelectedHackathon] = useState<Hackathon | null>(
+    null,
   );
 
   useEffect(() => {
     setMatrixColumns(createMatrixColumns());
   }, []);
 
+  const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), []);
+
+  const navItems = [
+    { label: "About", href: "#about" },
+    { label: "Skills", href: "#skills" },
+    { label: "Projects", href: "#projects" },
+    { label: "Hackathons", href: "#hackathons" },
+    { label: "Contact", href: "#contact" },
+  ];
+
   return (
-    <div className="relative min-h-screen text-[var(--text-main)]">
+    <div className="relative min-h-screen">
+      {/* Background */}
+      <div className="bg-gradient-base" />
+
+      {/* Matrix Rain */}
       <div className="matrix-rain" aria-hidden="true">
-        {matrixColumns.map((column) => (
+        {matrixColumns.map((col) => (
           <span
-            key={column.id}
+            key={col.id}
             className="matrix-column"
             style={{
-              left: column.left,
-              animationDuration: column.duration,
-              animationDelay: column.delay,
+              left: col.left,
+              animationDuration: col.duration,
+              animationDelay: col.delay,
             }}
           >
-            <span className="matrix-stream">{column.stream}</span>
+            <span className="matrix-stream">{col.stream}</span>
           </span>
         ))}
       </div>
-      <div className="scanlines" />
-      <header className="fixed top-0 w-full z-20 bg-[rgba(2,12,27,0.75)] backdrop-blur border-b border-[var(--line-soft)]">
-        <nav className="max-w-6xl mx-auto flex items-center justify-between px-5 sm:px-8 py-4">
-          <div className="flex items-center gap-3">
-            <span className="h-9 w-9 rounded-full bg-[var(--accent)]/20 border border-[var(--line-strong)] grid place-items-center overflow-hidden">
-              <img
-                src="/ea9e27d6-dbae-480c-bd4b-f10d7463b5a4.JPG"
-                alt="Victor Kangombe"
-                className="h-full w-full object-cover"
-              />
-            </span>
-            <div>
-              <p className="text-sm tracking-[0.2em] text-[var(--accent)] uppercase">
-                Centro de Comando
-              </p>
-              <p className="text-lg font-semibold">Victor Kangombe</p>
-            </div>
-          </div>
-          <div className="hidden md:flex items-center gap-6 text-sm text-[var(--text-dim)]">
-            <a
-              className="hover:text-[var(--accent)] transition"
-              href="#overview"
-            >
-              Visao Geral
-            </a>
-            <a className="hover:text-[var(--accent)] transition" href="#stack">
-              Tecnologias
-            </a>
-            <a
-              className="hover:text-[var(--accent)] transition"
-              href="#systems"
-            >
-              Infraestrutura
-            </a>
-            <a
-              className="hover:text-[var(--accent)] transition"
-              href="#projects"
-            >
-              Projetos
-            </a>
-            <a
-              className="hover:text-[var(--accent)] transition"
-              href="#hackathons"
-            >
-              Hackathons
-            </a>
-            <a
-              className="hover:text-[var(--accent)] transition"
-              href="#contact"
-            >
-              Contato
-            </a>
-          </div>
-          <a
-            href="#contact"
-            className="hidden sm:inline-flex items-center gap-2 rounded-full border border-[var(--line-strong)] px-4 py-2 text-xs uppercase tracking-[0.2em] text-[var(--accent)] hover:bg-[var(--accent)]/10"
-          >
-            Canal Seguro
+
+      {/* Header */}
+      <header className="site-header">
+        <nav className="site-nav">
+          <a href="#" className="nav-brand">
+            <img
+              src="/ea9e27d6-dbae-480c-bd4b-f10d7463b5a4.JPG"
+              alt="Victor Kangombe"
+              className="nav-avatar"
+            />
+            <span className="nav-name">Victor Kangombe</span>
           </a>
+
+          <div className="nav-links">
+            {navItems.map((item) => (
+              <a key={item.href} href={item.href} className="nav-link">
+                {item.label}
+              </a>
+            ))}
+          </div>
+
+          <a href="/Victor-Resume.pdf" className="nav-cta" download>
+            <DownloadIcon />
+            Resume
+          </a>
+
+          <button
+            className="mobile-menu-btn"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
+          </button>
         </nav>
       </header>
 
-      <main className="relative z-10 pt-24 sm:pt-28">
-        <section id="overview" className="relative overflow-hidden">
-          <div className="grid-mesh" />
-          <div className="section-block">
-            <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] items-start">
-              <motion.div
-                variants={motionContainer}
-                initial="hidden"
-                animate="show"
-              >
-                <motion.p
-                  variants={motionItem}
-                  className="text-xs uppercase tracking-[0.4em] text-[var(--text-dim)]"
-                >
-                  Resumo Profissional
-                </motion.p>
-                <motion.h1
-                  variants={motionItem}
-                  className="text-4xl sm:text-5xl lg:text-6xl font-semibold leading-tight text-glow"
-                >
-                  Centro de Comando DevOps Ciber
-                </motion.h1>
-                <motion.p
-                  variants={motionItem}
-                  className="mt-4 text-base sm:text-lg text-[var(--text-dim)] max-w-xl"
-                >
-                  Desenvolvedor Backend e Infraestrutura - DevOps. Foco em Java
-                  + Spring, APIs seguras e sistemas confiaveis com
-                  observabilidade em tempo real.
-                </motion.p>
-                <motion.div variants={motionItem} className="mt-6 space-y-4">
-                  <p className="text-sm uppercase tracking-[0.3em] text-[var(--accent)]">
-                    Sobre Mim
-                  </p>
-                  <p className="text-sm text-[var(--text-dim)] max-w-xl">
-                    Experiencia em programacao de sistemas, APIs seguras e
-                    infraestrutura conteinerizada. Comunicacao clara e entrega
-                    com qualidade tecnica.
-                  </p>
-                  <p className="text-sm text-[var(--text-dim)] max-w-xl">
-                    Foco principal: Java e infraestrutura.
-                  </p>
-                  <div className="flex flex-wrap gap-3">
-                    <a href="/Victor-Resume.pdf" className="link-simple" download>
-                      Baixar PDF
-                    </a>
-                  </div>
-                  <div className="flex flex-wrap gap-3">
-                    {[
-                      "Java",
-                      "Spring Boot",
-                      "APIs REST",
-                      "Docker",
-                      "Observabilidade",
-                    ].map((text) => (
-                      <span
-                        key={text}
-                        className="text-xs uppercase tracking-[0.2em] text-[var(--accent)] border border-[var(--line-soft)] px-3 py-2 rounded-full"
-                      >
-                        {text}
-                      </span>
-                    ))}
-                  </div>
-                </motion.div>
-              </motion.div>
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="mobile-nav">
+          {navItems.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className="mobile-nav-link"
+              onClick={closeMobileMenu}
+            >
+              {item.label}
+            </a>
+          ))}
+          <a
+            href="/Victor-Resume.pdf"
+            className="mobile-nav-link"
+            download
+            onClick={closeMobileMenu}
+          >
+            ↓ Download Resume
+          </a>
+        </div>
+      )}
 
-              <motion.div
-                variants={motionContainer}
-                initial="hidden"
-                animate="show"
-              >
-                <motion.div
-                  variants={motionItem}
-                  className="glow-border rounded-[var(--radius-lg)] bg-[rgba(10,25,47,0.6)] p-6 sm:p-8"
-                >
-                  <div className="flex flex-col sm:flex-row items-center gap-6">
-                    <div className="avatar-ring">
-                      <div className="avatar-core">
-                        <div className="avatar-placeholder">
-                          <img
-                            src="/victor.jpg"
-                            alt="Victor Kangombe"
-                            className="avatar-photo"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-center sm:text-left">
-                      <p className="text-xs uppercase tracking-[0.3em] text-[var(--text-dim)]">
-                        No de Identidade
-                      </p>
-                      <h3 className="mt-2 text-xl font-semibold">
-                        Victor Kangombe
-                      </h3>
-                      <p className="mt-2 text-sm text-[var(--text-dim)]">
-                        Desenvolvedor Backend - Infraestrutura - DevOps
-                      </p>
-                      <div className="mt-4 flex flex-wrap justify-center sm:justify-start gap-2">
-                        {["Luanda, Angola", "APIs", "Infra"].map((tag) => (
-                          <span
-                            key={tag}
-                            className="text-[11px] uppercase tracking-[0.2em] border border-[var(--line-soft)] px-3 py-1 rounded-full text-[var(--accent)]"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                      <div className="mt-6">
-                        <p className="text-xs uppercase tracking-[0.3em] text-[var(--text-dim)]">
-                          Educacao
-                        </p>
-                        <div className="mt-2 space-y-2 text-sm text-[var(--text-dim)]">
-                          <p>
-                            Especialidade em DevOps & Segurança (42 Advanced) ·
-                            presente
-                          </p>
-                          <p>
-                            Engenheiro de Software (42 Common Core) · 2024 -
-                            2026
-                          </p>
-                          <p>ISPTEC · presente</p>
-                          <p>
-                            Ensino medio em Ciências Físicas E Biológicas · 2020
-                            - 2022
-                          </p>
-                        </div>
-                      </div>
-                      <div className="mt-6">
-                        <p className="text-xs uppercase tracking-[0.3em] text-[var(--text-dim)]">
-                          Idiomas
-                        </p>
-                        <div className="mt-2 space-y-2 text-sm text-[var(--text-dim)]">
-                          <p>Portugues · nativo</p>
-                          <p>Ingles · intermediario</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              </motion.div>
-            </div>
-          </div>
+      {/* Main Content */}
+      <main className="relative z-10">
+        {/* ─── Hero ─── */}
+        <section className="hero">
+          <motion.div
+            className="hero-content"
+            variants={staggerContainer}
+            initial="hidden"
+            animate="show"
+          >
+            <motion.div variants={fadeUp} className="hero-badge">
+              <span className="hero-badge-dot" />
+              Available for work
+            </motion.div>
+
+            <motion.h1 variants={fadeUp} className="hero-name">
+              Victor Kangombe
+            </motion.h1>
+
+            <motion.p variants={fadeUp} className="hero-role">
+              Backend Engineer <span>|</span> Java <span>|</span> Node.js{" "}
+              <span>|</span> DevOps
+            </motion.p>
+
+            <motion.p variants={fadeUp} className="hero-desc">
+              Building scalable APIs, real-time systems and containerized
+              infrastructure.
+            </motion.p>
+
+            <motion.div variants={fadeUp} className="hero-actions">
+              <a href="#projects" className="btn-primary">
+                View Projects
+              </a>
+              <a href="#contact" className="btn-ghost">
+                Get in Touch
+              </a>
+            </motion.div>
+          </motion.div>
         </section>
 
-        <section id="stack" className="section-block">
-          <div className="stack-layout">
-            <div>
-              <h2 className="text-3xl sm:text-4xl font-semibold">
-                Tecnologias
-              </h2>
-              <p className="mt-3 text-[var(--text-dim)] max-w-2xl">
-                Tecnologias que uso diariamente em backend, DevOps e seguranca.
-              </p>
-              <div className="mt-6 flex flex-wrap gap-2">
-                {ORBIT_ICONS.map((tech) => (
-                  <span
-                    key={tech.label}
-                    className="text-[11px] uppercase tracking-[0.2em] border border-[var(--line-soft)] px-3 py-1 rounded-full text-[var(--accent)]"
-                  >
-                    {tech.label}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className="orbit-system float-slow" aria-label="Globo hacker">
-              <div className="hacker-globe" />
-              <div className="orbit-ring orbit-ring-1">
-                {ORBIT_ICONS.slice(0, 8).map((tech, index) => (
-                  <span
-                    key={tech.label}
-                    className="orbit-icon"
-                    style={{
-                      ["--angle" as string]: `${index * 45}deg`,
-                      ["--radius" as string]: "150px",
-                      color: `#${tech.icon.hex}`,
-                    }}
-                    title={tech.label}
-                  >
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <path d={tech.icon.path} />
-                    </svg>
-                  </span>
-                ))}
-              </div>
-              <div className="orbit-ring orbit-ring-2">
-                {ORBIT_ICONS.slice(8, 16).map((tech, index) => (
-                  <span
-                    key={tech.label}
-                    className="orbit-icon"
-                    style={{
-                      ["--angle" as string]: `${index * 45 + 22.5}deg`,
-                      ["--radius" as string]: "205px",
-                      color: `#${tech.icon.hex}`,
-                    }}
-                    title={tech.label}
-                  >
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <path d={tech.icon.path} />
-                    </svg>
-                  </span>
-                ))}
-              </div>
-              <p className="orbit-hint">Orbita continua</p>
-            </div>
-          </div>
-        </section>
+        {/* ─── About ─── */}
+        <section id="about" className="section">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-80px" }}
+          >
+            <motion.p variants={fadeUp} className="section-label">
+              About
+            </motion.p>
+            <motion.h2 variants={fadeUp} className="section-title">
+              Backend-focused engineer
+            </motion.h2>
+            <motion.p variants={fadeUp} className="section-desc">
+              Backend Developer focused on Java (Spring Boot) and Node.js
+              (NestJS), building APIs with JWT authentication, Redis caching and
+              Docker-based infrastructure.
+            </motion.p>
+          </motion.div>
 
-        <section id="systems" className="section-block">
-          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-            <div>
-              <h2 className="text-3xl sm:text-4xl font-semibold">
-                Visao de Infraestrutura
-              </h2>
-              <p className="mt-3 text-[var(--text-dim)] max-w-2xl">
-                Painel de observabilidade inspirado em Grafana, com leitura
-                rapida de disponibilidade, fluxo de dados e postura de
-                seguranca.
+          <div className="about-grid">
+            <motion.div
+              className="card-flat about-card"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <p className="about-card-title">Experience</p>
+              <p className="about-text">
+                Experience designing backend systems with reverse proxy (NGINX),
+                real-time communication and observability practices. Interested
+                in system reliability, DevOps and applied cybersecurity.
               </p>
-              <div className="mt-6 grid gap-4">
-                <div className="glow-border rounded-[var(--radius-md)] bg-[rgba(10,25,47,0.55)] p-5">
-                  <p className="text-xs uppercase tracking-[0.3em] text-[var(--accent)]">
-                    Experiencia em Infraestrutura
+            </motion.div>
+
+            <motion.div
+              className="card-flat about-card"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <p className="about-card-title">Education</p>
+              <ul className="about-list">
+                <li>
+                  DevOps & Security Specialization (42 Advanced) · present
+                </li>
+                <li>Software Engineering (42 Common Core) · 2024 – 2026</li>
+                <li>ISPTEC – Computer Science · present</li>
+                <li>
+                  High School – Physical & Biological Sciences · 2020 – 2022
+                </li>
+              </ul>
+            </motion.div>
+
+            <motion.div
+              className="card-flat about-card"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <p className="about-card-title">Profile</p>
+              <div className="profile-card" style={{ padding: 0 }}>
+                <img
+                  src="/victor.jpg"
+                  alt="Victor Kangombe"
+                  className="profile-avatar"
+                />
+                <div className="profile-info">
+                  <h3>Victor Kangombe</h3>
+                  <p className="profile-role">
+                    Backend Engineer · DevOps · Infrastructure
                   </p>
-                  <ul className="mt-3 space-y-2 text-sm text-[var(--text-dim)]">
-                    <li>
-                      Orquestracao com Docker Compose em ambientes locais.
-                    </li>
-                    <li>
-                      Reverse proxy, isolamento de servicos e dependencias.
-                    </li>
-                    <li>Monitorizacao com metricas e alertas.</li>
-                  </ul>
+                  <div className="profile-tags">
+                    {["Luanda, Angola", "APIs", "Infra", "Security"].map(
+                      (tag) => (
+                        <span key={tag} className="tag-outline">
+                          {tag}
+                        </span>
+                      ),
+                    )}
+                  </div>
                 </div>
               </div>
-              <div className="mt-8 grid gap-4 sm:grid-cols-2">
-                {[
-                  {
-                    title: "Fluxo de Dados",
-                    detail:
-                      "Usuario -> API -> Redis -> DB -> Logs -> Monitoramento",
-                  },
-                  {
-                    title: "Escudo de Ameacas",
-                    detail:
-                      "WAF ativo, regras dinamicas, deteccao de anomalias.",
-                  },
-                  {
-                    title: "Saude da Pipeline",
-                    detail:
-                      "Builds, deploys e rollback com telemetria em tempo real.",
-                  },
-                  {
-                    title: "Conformidade",
-                    detail:
-                      "Auditoria, privilegio minimo e politicas de acesso.",
-                  },
-                ].map((card) => (
-                  <div
-                    key={card.title}
-                    className="glow-border rounded-[var(--radius-md)] bg-[rgba(10,25,47,0.55)] p-5"
-                  >
-                    <p className="text-xs uppercase tracking-[0.3em] text-[var(--accent)]">
-                      {card.title}
-                    </p>
-                    <p className="mt-3 text-sm text-[var(--text-dim)]">
-                      {card.detail}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="glow-border rounded-[var(--radius-lg)] bg-[rgba(2,12,27,0.65)] p-6 sm:p-8">
-              <h3 className="text-sm uppercase tracking-[0.3em] text-[var(--text-dim)]">
-                Sinais de Capacidade
-              </h3>
-              <div className="mt-6 space-y-4">
-                {[
-                  {
-                    label: "Sistemas Distribuidos",
-                    detail:
-                      "Descoberta de servicos, retentativas, controle de carga",
-                  },
-                  {
-                    label: "Postura de Seguranca",
-                    detail: "WAF, hardening, resposta a incidentes",
-                  },
-                  {
-                    label: "Observabilidade",
-                    detail: "Rastreamento, metricas, logs, alertas",
-                  },
-                  {
-                    label: "Algoritmos",
-                    detail: "Resolucao de problemas, otimizacao, estruturas",
-                  },
-                ].map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="rounded-[var(--radius-md)] border border-[var(--line-soft)] bg-[rgba(0,245,255,0.04)] p-4"
-                  >
-                    <p className="text-xs uppercase tracking-[0.25em] text-[var(--accent)]">
-                      {stat.label}
-                    </p>
-                    <p className="mt-2 text-sm text-[var(--text-dim)]">
-                      {stat.detail}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            </motion.div>
+
+            <motion.div
+              className="card-flat about-card"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <p className="about-card-title">Languages</p>
+              <ul className="about-list">
+                <li>Portuguese · Native</li>
+                <li>English · Intermediate</li>
+              </ul>
+            </motion.div>
           </div>
         </section>
 
-        <section id="projects" className="section-block">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h2 className="text-3xl sm:text-4xl font-semibold">
-                Projetos Selecionados
-              </h2>
-              <p className="mt-3 text-[var(--text-dim)] max-w-2xl">
-                Projetos apresentados com fluxo, tecnologia e responsabilidade
-                bem definidos.
-              </p>
-            </div>
-          </div>
-          <div className="mt-10 grid gap-6 lg:grid-cols-2">
-            {visibleProjects.map((project) => (
-              <article
+        <hr className="divider" style={{ maxWidth: 1120, margin: "0 auto" }} />
+
+        {/* ─── Skills ─── */}
+        <section id="skills" className="section">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-80px" }}
+          >
+            <motion.p variants={fadeUp} className="section-label">
+              Tech Stack
+            </motion.p>
+            <motion.h2 variants={fadeUp} className="section-title">
+              Technologies I work with
+            </motion.h2>
+            <motion.p variants={fadeUp} className="section-desc">
+              Tools and languages I use daily for backend development, DevOps
+              and infrastructure.
+            </motion.p>
+          </motion.div>
+
+          <motion.div
+            className="skills-grid"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-60px" }}
+          >
+            {TECH_STACK.map((tech) => (
+              <motion.div
+                key={tech.label}
+                variants={fadeUp}
+                className="skill-item"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill={`#${tech.icon.hex}`}
+                  aria-hidden="true"
+                >
+                  <path d={tech.icon.path} />
+                </svg>
+                <span>{tech.label}</span>
+              </motion.div>
+            ))}
+          </motion.div>
+        </section>
+
+        <hr className="divider" style={{ maxWidth: 1120, margin: "0 auto" }} />
+
+        {/* ─── Projects ─── */}
+        <section id="projects" className="section">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-80px" }}
+          >
+            <motion.p variants={fadeUp} className="section-label">
+              Projects
+            </motion.p>
+            <motion.h2 variants={fadeUp} className="section-title">
+              Selected work
+            </motion.h2>
+            <motion.p variants={fadeUp} className="section-desc">
+              Projects with clear architecture, well-defined responsibility and
+              real technical depth.
+            </motion.p>
+          </motion.div>
+
+          <div className="projects-grid">
+            {PROJECTS.map((project, idx) => (
+              <motion.article
                 key={project.name}
-                className="glow-border rounded-[var(--radius-lg)] bg-[rgba(10,25,47,0.55)] p-6 sm:p-7"
+                className="card project-card"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: idx * 0.06 }}
               >
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xl font-semibold text-[var(--text-main)]">
-                    {project.name}
-                  </h3>
-                  <span className="text-xs uppercase tracking-[0.3em] text-[var(--accent)]">
-                    Ativo
-                  </span>
-                </div>
-                <p className="mt-3 text-sm text-[var(--text-dim)]">
-                  {project.summary}
-                </p>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {project.stack.map((tech) => (
-                    <span
-                      key={tech}
-                      className="text-[11px] uppercase tracking-[0.2em] border border-[var(--line-soft)] px-3 py-1 rounded-full text-[var(--accent)]"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-                <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--line-soft)] p-4 bg-[rgba(1,8,20,0.7)]">
-                  <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--text-dim)]">
-                    Fluxo de Dados
-                  </p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {project.flow.map((node) => (
-                      <span
-                        key={node}
-                        className="px-3 py-2 rounded-full bg-[rgba(0,245,255,0.08)] text-xs text-[var(--text-main)]"
-                      >
-                        {node}
+                <ProjectCarousel images={project.images} />
+                <div className="project-body">
+                  <h3 className="project-name">{project.name}</h3>
+                  <p className="project-desc">{project.description}</p>
+                  <div className="project-stack">
+                    {project.stack.map((tech) => (
+                      <span key={tech} className="tag">
+                        {tech}
                       </span>
                     ))}
                   </div>
+                  {(project.github || project.live) && (
+                    <div className="project-links">
+                      {project.github && (
+                        <a
+                          href={project.github}
+                          className="project-link"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          <GithubIcon />
+                          GitHub
+                        </a>
+                      )}
+                      {project.live && (
+                        <a
+                          href={project.live}
+                          className="project-link"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          <ExternalIcon />
+                          Live
+                        </a>
+                      )}
+                    </div>
+                  )}
                 </div>
-              </article>
+              </motion.article>
             ))}
-          </div>
-          <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-xs uppercase tracking-[0.3em] text-[var(--text-dim)] text-center sm:text-left">
-              Pagina {projectPage} de {totalProjectPages}
-            </p>
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                className="link-simple disabled:opacity-40"
-                onClick={() => setProjectPage((page) => Math.max(1, page - 1))}
-                disabled={projectPage === 1}
-              >
-                Anterior
-              </button>
-              <button
-                type="button"
-                className="link-simple disabled:opacity-40"
-                onClick={() =>
-                  setProjectPage((page) =>
-                    Math.min(totalProjectPages, page + 1),
-                  )
-                }
-                disabled={projectPage === totalProjectPages}
-              >
-                Proxima
-              </button>
-            </div>
           </div>
         </section>
 
-        <section id="hackathons" className="section-block">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h2 className="text-3xl sm:text-4xl font-semibold">Hackathons</h2>
-              <p className="mt-3 text-[var(--text-dim)] max-w-2xl">
-                Resultados em competicoes nacionais e internacionais.
-              </p>
-            </div>
-            <span className="text-xs uppercase tracking-[0.3em] text-[var(--accent)]">
-              Destaques
-            </span>
-          </div>
-          <div className="mt-8 hackathon-table">
-            <div className="hackathon-row">
-              <span className="hackathon-head">Ano</span>
-              <span className="hackathon-head">Posicao</span>
-              <span className="hackathon-head">Competicao</span>
-              <span className="hackathon-head">Escala</span>
-            </div>
-            {HACKATHONS.map((item) => (
-              <div
-                key={`${item.year}-${item.competition}`}
-                className="hackathon-row"
+        <hr className="divider" style={{ maxWidth: 1120, margin: "0 auto" }} />
+
+        {/* ─── Hackathons ─── */}
+        <section id="hackathons" className="section">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-80px" }}
+          >
+            <motion.p variants={fadeUp} className="section-label">
+              Competitions
+            </motion.p>
+            <motion.h2 variants={fadeUp} className="section-title">
+              Hackathons & Awards
+            </motion.h2>
+            <motion.p variants={fadeUp} className="section-desc">
+              Results from national and international competitions.
+            </motion.p>
+          </motion.div>
+
+          <div className="hackathon-scroll">
+            {HACKATHONS.map((hack, idx) => (
+              <motion.div
+                key={hack.title}
+                className="card hackathon-card"
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: idx * 0.08 }}
+                onClick={() => setSelectedHackathon(hack)}
               >
-                <span>{item.year}</span>
-                <span className="text-[var(--accent)] font-semibold">
-                  {item.position}
-                </span>
-                <span>{item.competition}</span>
-                <span className="text-[var(--text-dim)]">{item.scope}</span>
+                {hack.image ? (
+                  <img
+                    src={hack.image}
+                    alt={hack.title}
+                    className="hackathon-image"
+                  />
+                ) : (
+                  <div className="hackathon-image-placeholder">
+                    <span style={{ fontSize: "1.5rem" }}>
+                      {hack.position === "1st Place"
+                        ? "🥇"
+                        : hack.position === "2nd Place"
+                          ? "🥈"
+                          : "🥉"}
+                    </span>
+                  </div>
+                )}
+                <div className="hackathon-body">
+                  <div className={`hackathon-position ${hack.positionClass}`}>
+                    {hack.position}
+                  </div>
+                  <h3 className="hackathon-title">{hack.title}</h3>
+                  <p className="hackathon-scope">
+                    {hack.year} · {hack.scope}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* Hackathon Modal */}
+        {selectedHackathon && (
+          <HackathonModal
+            hackathon={selectedHackathon}
+            onClose={() => setSelectedHackathon(null)}
+          />
+        )}
+
+        <hr className="divider" style={{ maxWidth: 1120, margin: "0 auto" }} />
+
+        {/* ─── Contact ─── */}
+        <section id="contact" className="contact-section">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="card-flat contact-card">
+              <div>
+                <p className="section-label">Contact</p>
+                <h2 className="section-title">Let&#39;s work together</h2>
+                <p
+                  className="section-desc"
+                  style={{ marginTop: "0.5rem", maxWidth: 420 }}
+                >
+                  Have a project in mind, want to discuss architecture or just
+                  connect? Reach out and I&#39;ll respond promptly.
+                </p>
               </div>
-            ))}
-          </div>
-        </section>
-
-        <section id="contact" className="section-block-tight">
-          <div className="glow-border rounded-[var(--radius-lg)] bg-[rgba(2,12,27,0.75)] p-5 sm:p-8 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <h2 className="text-3xl sm:text-4xl font-semibold">
-                Contato Seguro
-              </h2>
-              <p className="mt-3 text-[var(--text-dim)] max-w-xl">
-                Quer colaborar, revisar arquitetura ou abrir um canal seguro?
-                Envie uma mensagem e respondo com prioridade.
-              </p>
+              <div className="contact-links">
+                <a href={`mailto:${CONTACT_EMAIL}`} className="btn-primary">
+                  <MailIcon />
+                  Email
+                </a>
+                <a
+                  href={CONTACT_LINKEDIN}
+                  className="btn-ghost"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <LinkedInIcon />
+                  LinkedIn
+                </a>
+                <a
+                  href={CONTACT_GITHUB}
+                  className="btn-ghost"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <GithubIcon />
+                  GitHub
+                </a>
+              </div>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <a href={`mailto:${CONTACT_EMAIL}`} className="link-simple">
-                Enviar email
-              </a>
-              <a
-                href={CONTACT_LINKEDIN}
-                className="link-simple"
-                target="_blank"
-                rel="noreferrer"
-              >
-                LinkedIn
-              </a>
-              <a
-                href={CONTACT_GITHUB}
-                className="link-simple"
-                target="_blank"
-                rel="noreferrer"
-              >
-                GitHub
-              </a>
-              <a href="#overview" className="link-simple">
-                Voltar ao topo
-              </a>
-            </div>
-          </div>
+          </motion.div>
         </section>
       </main>
+
+      {/* Footer */}
+      <footer className="site-footer">
+        © {new Date().getFullYear()} Victor Kangombe. Built with Next.js
+      </footer>
     </div>
   );
 }
