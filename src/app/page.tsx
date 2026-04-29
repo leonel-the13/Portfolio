@@ -624,7 +624,7 @@ export default function Home() {
             ))}
           </div>
 
-          <a href="/Victor-Resume.pdf" className="nav-cta" download>
+          <a href="/victor-resume-en.pdf" className="nav-cta" download>
             <DownloadIcon />
             Resume
           </a>
@@ -653,7 +653,7 @@ export default function Home() {
             </a>
           ))}
           <a
-            href="/Victor-Resume.pdf"
+            href="/victor-resume-en.pdf"
             className="mobile-nav-link"
             download
             onClick={closeMobileMenu}
