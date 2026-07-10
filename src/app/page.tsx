@@ -92,7 +92,15 @@ const PROJECTS: Project[] = [
     description:
       "Backend contribution with Java 17 and Spring Boot, focused on REST APIs, JWT authentication, and containerized infrastructure with Docker and NGINX.",
     stack: ["Java 17", "Spring Boot", "PostgreSQL", "Docker", "WAF"],
-    images: ["/projects/black-hole-academy/cover.png"],
+    images: [
+      "/projects/black-hole-academy/cover.png",
+      "/projects/black-hole-academy/IMG_8096.jpeg",
+      "/projects/black-hole-academy/IMG_8185.jpeg",
+      "/projects/black-hole-academy/IMG_8233.jpeg",
+      "/projects/black-hole-academy/16DA956F-2907-4EE4-A698-34B5D00B4EAC.JPG",
+      "/projects/black-hole-academy/470DF929-B7F6-4404-9B9E-0DF349C78ABB.JPG",
+      "/projects/black-hole-academy/FA6EA684-AF93-4B43-A4CB-EFA667358C76.JPG",
+    ],
   },
   {
     name: "Cesta Digital",
@@ -141,7 +149,13 @@ const HACKATHONS: Hackathon[] = [
     year: "2026",
     scope: "National",
     image: "/hackathons/hackathon-ostja/cover.jpg",
-    gallery: [],
+    gallery: [
+      "/hackathons/hackathon-ostja/cover.jpg",
+      "/hackathons/hackathon-ostja/IMG_8639.jpeg",
+      "/hackathons/hackathon-ostja/IMG_8640.jpeg",
+      "/hackathons/hackathon-ostja/CB8DB85C-3CD1-4B14-A29E-D8826D8F5BFF.JPG",
+      "/hackathons/hackathon-ostja/Screenshot 2026-04-14 at 20.41.56.PNG",
+    ],
     description:
       "National hackathon organized by OSTJA. Developed a full solution addressing real-world infrastructure challenges.",
     team: "team",
@@ -178,7 +192,14 @@ const HACKATHONS: Hackathon[] = [
     year: "2025",
     scope: "National",
     image: "/hackathons/africell-code-fast/cover.JPEG",
-    gallery: [],
+    gallery: [
+      "/hackathons/africell-code-fast/cover.JPEG",
+      "/hackathons/africell-code-fast/IMG_6916.jpg",
+      "/hackathons/africell-code-fast/IMG_6926.jpeg",
+      "/hackathons/africell-code-fast/46E73182-9592-455E-98D9-FE336AFDF3F4.JPG",
+      "/hackathons/africell-code-fast/4E768EB8-E82F-4147-B795-8D4F4EFFD1E1.JPG",
+      "/hackathons/africell-code-fast/c06c1f88-8251-43a6-93e1-2ff3cfe6123f.JPG",
+    ],
     description:
       "Speed coding competition sponsored by Africell. System Design, Build and Debug.",
     team: "solo",
@@ -191,7 +212,12 @@ const HACKATHONS: Hackathon[] = [
     year: "2025",
     scope: "International",
     image: "/hackathons/nasa-space-apps/cover.png",
-    gallery: [],
+    gallery: [
+      "/hackathons/nasa-space-apps/cover.png",
+      "/hackathons/nasa-space-apps/IMG_5767.jpeg",
+      "/hackathons/nasa-space-apps/IMG_5783.jpeg",
+      "/hackathons/nasa-space-apps/8080748F-8DE8-4F5F-81F9-46AC12DCE179.JPG",
+    ],
     description:
       "International hackathon by NASA. Worked on a solution leveraging open data for space and earth science applications.",
     team: "team",
@@ -226,7 +252,9 @@ const HACKATHONS: Hackathon[] = [
     year: "2023",
     scope: "University",
     image: "/hackathons/isptec-programming/cover.jpg",
-    gallery: [],
+    gallery: [
+      "/hackathons/isptec-programming/cover.jpg",
+    ],
     description:
       "Competitive programming contest at ISPTEC university, focused on algorithms and problem-solving.",
     team: "team",
