@@ -571,7 +571,9 @@ function TerminalConsole({ lang }: { lang: 'pt' | 'en' }) {
     } else if (cmd === 'about') {
       output = lang === 'pt' ? TRANSLATIONS.pt.consoleAbout : TRANSLATIONS.en.consoleAbout;
     } else if (cmd === 'skills') {
-      output = "Java:    [██████████] 90%\nDocker:  [████████░░] 80%\nNestJS:  [████████░░] 80%\nLinux:   [█████████░] 90%";
+      output = lang === 'pt'
+        ? "• Java & Spring Boot\n• Node.js & NestJS\n• Docker & Contentores\n• Linux & Administração de Sistemas\n• PostgreSQL, MySQL & Redis\n• Git, GitHub & CI/CD"
+        : "• Java & Spring Boot\n• Node.js & NestJS\n• Docker & Containerization\n• Linux & System Administration\n• PostgreSQL, MySQL & Redis\n• Git, GitHub & CI/CD";
     } else if (cmd === 'contact') {
       output = `Email: ${CONTACT_EMAIL}\nGitHub: github.com/leonel-the13\nLinkedIn: linkedin.com/in/victor-kangombe`;
     } else if (cmd === 'clear') {
@@ -1220,6 +1222,7 @@ export default function Home() {
   const [lang, setLang] = useState<'pt' | 'en'>('pt');
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [activeAboutTab, setActiveAboutTab] = useState<'bio' | 'education' | 'terminal'>('bio');
+  const [currentProjectPage, setCurrentProjectPage] = useState(1);
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -1460,51 +1463,6 @@ export default function Home() {
                 </div>
               </motion.div>
             </div>
-
-            {/* Right Column */}
-            <div className="hero-right">
-              <div className="hero-image-wrapper">
-                <img
-                  src="/victor.jpg"
-                  alt="Victor Kangombe"
-                  className="hero-profile-img"
-                  loading="lazy"
-                />
-                <div className="hero-image-glow" />
-
-                {/* Floating Tags */}
-                <motion.span
-                  className="floating-tag tag-java"
-                  animate={{ y: [0, -8, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="#fbbf24" style={{ display: "inline-block" }}>
-                    <path d={siOpenjdk.path} />
-                  </svg>
-                  Java
-                </motion.span>
-                <motion.span
-                  className="floating-tag tag-docker"
-                  animate={{ y: [0, 8, 0] }}
-                  transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="#38bdf8" style={{ display: "inline-block" }}>
-                    <path d={siDocker.path} />
-                  </svg>
-                  Docker
-                </motion.span>
-                <motion.span
-                  className="floating-tag tag-nestjs"
-                  animate={{ y: [0, -6, 0] }}
-                  transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="#f472b6" style={{ display: "inline-block" }}>
-                    <path d={siNestjs.path} />
-                  </svg>
-                  NestJS
-                </motion.span>
-              </div>
-            </div>
           </motion.div>
         </section>
 
@@ -1742,61 +1700,115 @@ export default function Home() {
             </motion.p>
           </motion.div>
 
-          <div className="projects-grid">
-            {PROJECTS.map((project, idx) => (
-              <motion.article
-                key={project.name}
-                className="card project-card"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: idx * 0.06 }}
-                onClick={() => setSelectedProject(project)}
-                style={{ cursor: "pointer" }}
-              >
-                <ProjectCarousel images={project.images} />
-                <div className="project-body">
-                  <h3 className="project-name">{project.name}</h3>
-                  <p className="project-desc">{getText(project.description, lang)}</p>
-                  <div className="project-stack">
-                    {project.stack.map((tech) => (
-                      <span key={tech} className="tag">
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                  {(project.github || project.live) && (
-                    <div className="project-links">
-                      {project.github && (
-                        <a
-                          href={project.github}
-                          className="project-link"
-                          target="_blank"
-                          rel="noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <GithubIcon />
-                          GitHub
-                        </a>
-                      )}
-                      {project.live && (
-                        <a
-                          href={project.live}
-                          className="project-link"
-                          target="_blank"
-                          rel="noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <ExternalIcon />
-                          Live
-                        </a>
-                      )}
-                    </div>
-                  )}
+          {(() => {
+            const projectsPerPage = 3;
+            const indexOfLastProject = currentProjectPage * projectsPerPage;
+            const indexOfFirstProject = indexOfLastProject - projectsPerPage;
+            const currentProjects = PROJECTS.slice(indexOfFirstProject, indexOfLastProject);
+            const totalProjectPages = Math.ceil(PROJECTS.length / projectsPerPage);
+
+            return (
+              <>
+                <div className="projects-grid">
+                  {currentProjects.map((project, idx) => (
+                    <motion.article
+                      key={project.name}
+                      className="card project-card"
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: idx * 0.06 }}
+                      onClick={() => setSelectedProject(project)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <ProjectCarousel images={project.images} />
+                      <div className="project-body">
+                        <h3 className="project-name">{project.name}</h3>
+                        <p className="project-desc">{getText(project.description, lang)}</p>
+                        <div className="project-stack">
+                          {project.stack.map((tech) => (
+                            <span key={tech} className="tag">
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                        {(project.github || project.live) && (
+                          <div className="project-links">
+                            {project.github && (
+                              <a
+                                href={project.github}
+                                className="project-link"
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <GithubIcon />
+                                GitHub
+                              </a>
+                            )}
+                            {project.live && (
+                              <a
+                                href={project.live}
+                                className="project-link"
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <ExternalIcon />
+                                Live
+                              </a>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </motion.article>
+                  ))}
                 </div>
-              </motion.article>
-            ))}
-          </div>
+
+                {totalProjectPages > 1 && (
+                  <div className="pagination-container">
+                    <button
+                      onClick={() => {
+                        setCurrentProjectPage(prev => Math.max(prev - 1, 1));
+                        const section = document.getElementById("projects");
+                        if (section) section.scrollIntoView({ behavior: "smooth" });
+                      }}
+                      disabled={currentProjectPage === 1}
+                      className="btn-pagination"
+                    >
+                      ← {lang === 'pt' ? 'Anterior' : 'Previous'}
+                    </button>
+                    <div className="pagination-numbers">
+                      {Array.from({ length: totalProjectPages }, (_, i) => i + 1).map(page => (
+                        <button
+                          key={page}
+                          onClick={() => {
+                            setCurrentProjectPage(page);
+                            const section = document.getElementById("projects");
+                            if (section) section.scrollIntoView({ behavior: "smooth" });
+                          }}
+                          className={`pagination-number-btn ${currentProjectPage === page ? 'active' : ''}`}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => {
+                        setCurrentProjectPage(prev => Math.min(prev + 1, totalProjectPages));
+                        const section = document.getElementById("projects");
+                        if (section) section.scrollIntoView({ behavior: "smooth" });
+                      }}
+                      disabled={currentProjectPage === totalProjectPages}
+                      className="btn-pagination"
+                    >
+                      {lang === 'pt' ? 'Seguinte' : 'Next'} →
+                    </button>
+                  </div>
+                )}
+              </>
+            );
+          })()}
         </section>
 
         <hr className="divider" style={{ maxWidth: 1120, margin: "0 auto" }} />
