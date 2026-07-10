@@ -743,10 +743,28 @@ function HackathonImageCarousel({
 
   useEffect(() => {
     if (galleryImages.length <= 1) return;
-    const timer = setInterval(() => {
-      setCurrent((c) => (c + 1) % galleryImages.length);
-    }, 4000);
-    return () => clearInterval(timer);
+
+    let timeoutId: NodeJS.Timeout;
+
+    const runTransition = () => {
+      const randomDelay = Math.floor(Math.random() * (10000 - 4000 + 1)) + 4000;
+
+      timeoutId = setTimeout(() => {
+        setCurrent((c) => {
+          if (galleryImages.length <= 1) return c;
+          let nextIndex = c;
+          while (nextIndex === c) {
+            nextIndex = Math.floor(Math.random() * galleryImages.length);
+          }
+          return nextIndex;
+        });
+        runTransition();
+      }, randomDelay);
+    };
+
+    runTransition();
+
+    return () => clearTimeout(timeoutId);
   }, [galleryImages.length]);
 
   return (

@@ -2,14 +2,27 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://victorkangombe.dev'),
   title: "Victor Kangombe — Backend Engineer",
   description:
     "Backend Engineer specializing in Java, Spring Boot, Node.js, and DevOps. Building scalable APIs, real-time systems and containerized infrastructure.",
+  icons: {
+    icon: "/icon.jpg",
+    shortcut: "/icon.jpg",
+    apple: "/icon.jpg",
+  },
   openGraph: {
     title: "Victor Kangombe — Backend Engineer",
     description:
       "Backend Engineer specializing in Java, Spring Boot, Node.js, and DevOps. Building scalable APIs, real-time systems and containerized infrastructure.",
-    images: ["/victor.jpg"],
+    images: [
+      {
+        url: "/victor.jpg",
+        width: 800,
+        height: 800,
+        alt: "Victor Kangombe",
+      }
+    ],
     type: "website",
   },
   twitter: {
