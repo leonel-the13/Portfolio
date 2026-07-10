@@ -84,20 +84,20 @@ const TRANSLATIONS = {
     heroStatsProjects: "Projetos",
     heroStatsTechs: "Tecnologias",
     aboutTitle: "Sobre mim",
-    aboutSubtitle: "Minha <span class='highlight-pill'>Jornada</span>",
+    aboutSubtitle: "Minha Jornada",
     aboutDesc: "Desenvolvedor Backend com foco em APIs RESTful escaláveis, arquitetura de servidores e infraestrutura containerizada. Experiente em Java (Spring Boot) e Node.js (NestJS), aplicando autenticação JWT, cache com Redis e comunicação em tempo real. Entusiasta de cibersegurança, DevOps e observabilidade.",
     profileTitle: "Perfil",
     languagesTitle: "Idiomas",
-    skillsTitle: "Tecnologias com que <span class='highlight-pill'>trabalho</span>",
+    skillsTitle: "Tecnologias com que trabalho",
     skillsLabel: "Minha Stack",
     skillsDesc: "Ferramentas e linguagens que utilizo no dia-a-dia para desenvolvimento backend, DevOps e infraestrutura.",
-    projectsTitle: "Trabalhos <span class='highlight-pill'>Selecionados</span>",
+    projectsTitle: "Trabalhos Selecionados",
     projectsLabel: "Projetos",
     projectsDesc: "Projetos com arquitetura limpa, responsabilidade bem definida e profundidade técnica real.",
-    hackathonsTitle: "Hackathons e <span class='highlight-pill'>Prémios</span>",
+    hackathonsTitle: "Hackathons e Prémios",
     hackathonsLabel: "Competições",
     hackathonsDesc: "Resultados obtidos em competições nacionais e internacionais.",
-    contactTitle: "Vamos trabalhar <span class='highlight-pill'>juntos</span>",
+    contactTitle: "Vamos trabalhar juntos",
     contactLabel: "Contacto",
     contactDesc: "Tem um projeto em mente, quer discutir arquitetura ou simplesmente conectar-se? Entre em contacto e responderei brevemente.",
     footerText: "Victor Kangombe. Construído com Next.js",
@@ -147,20 +147,20 @@ const TRANSLATIONS = {
     heroStatsProjects: "Projects",
     heroStatsTechs: "Technologies",
     aboutTitle: "About me",
-    aboutSubtitle: "My <span class='highlight-pill'>Journey</span>",
+    aboutSubtitle: "My Journey",
     aboutDesc: "Backend Developer focused on building scalable REST APIs, server-side architecture, and containerized infrastructure. Experienced with Java (Spring Boot) and Node.js (NestJS), applying JWT authentication, Redis caching, and real-time communication. Enthusiast of cybersecurity, DevOps, and observability.",
     profileTitle: "Profile",
     languagesTitle: "Languages",
-    skillsTitle: "Technologies I <span class='highlight-pill'>work</span> with",
+    skillsTitle: "Technologies I work with",
     skillsLabel: "Tech Stack",
     skillsDesc: "Tools and languages I use daily for backend development, DevOps, and infrastructure.",
-    projectsTitle: "Selected <span class='highlight-pill'>work</span>",
+    projectsTitle: "Selected work",
     projectsLabel: "Projects",
     projectsDesc: "Projects with clear architecture, well-defined responsibility, and real technical depth.",
-    hackathonsTitle: "Hackathons & <span class='highlight-pill'>Awards</span>",
+    hackathonsTitle: "Hackathons & Awards",
     hackathonsLabel: "Competitions",
     hackathonsDesc: "Results from national and international competitions.",
-    contactTitle: "Let's work <span class='highlight-pill'>together</span>",
+    contactTitle: "Let's work together",
     contactLabel: "Contact",
     contactDesc: "Have a project in mind, want to discuss architecture, or just connect? Reach out and I'll respond promptly.",
     footerText: "Victor Kangombe. Built with Next.js",
@@ -1520,11 +1520,9 @@ export default function Home() {
               <StarIcon />
               {t('aboutTitle')}
             </motion.div>
-            <motion.h2 
-              variants={fadeUp} 
-              className="section-title"
-              dangerouslySetInnerHTML={{ __html: t('aboutSubtitle') }}
-            />
+            <motion.h2 variants={fadeUp} className="section-title">
+              {t('aboutSubtitle')}
+            </motion.h2>
           </motion.div>
 
           <div className="about-grid-improved">
@@ -1687,11 +1685,9 @@ export default function Home() {
               <StarIcon />
               {t('skillsLabel')}
             </motion.div>
-            <motion.h2 
-              variants={fadeUp} 
-              className="section-title"
-              dangerouslySetInnerHTML={{ __html: t('skillsTitle') }}
-            />
+            <motion.h2 variants={fadeUp} className="section-title">
+              {t('skillsTitle')}
+            </motion.h2>
             <motion.p variants={fadeUp} className="section-desc">
               {t('skillsDesc')}
             </motion.p>
@@ -1738,11 +1734,9 @@ export default function Home() {
               <StarIcon />
               {t('projectsLabel')}
             </motion.div>
-            <motion.h2 
-              variants={fadeUp} 
-              className="section-title"
-              dangerouslySetInnerHTML={{ __html: t('projectsTitle') }}
-            />
+            <motion.h2 variants={fadeUp} className="section-title">
+              {t('projectsTitle')}
+            </motion.h2>
             <motion.p variants={fadeUp} className="section-desc">
               {t('projectsDesc')}
             </motion.p>
@@ -1819,11 +1813,9 @@ export default function Home() {
               <StarIcon />
               {t('hackathonsLabel')}
             </motion.div>
-            <motion.h2 
-              variants={fadeUp} 
-              className="section-title"
-              dangerouslySetInnerHTML={{ __html: t('hackathonsTitle') }}
-            />
+            <motion.h2 variants={fadeUp} className="section-title">
+              {t('hackathonsTitle')}
+            </motion.h2>
             <motion.p variants={fadeUp} className="section-desc">
               {t('hackathonsDesc')}
             </motion.p>
@@ -1907,10 +1899,7 @@ export default function Home() {
                   <StarIcon />
                   {t('contactLabel')}
                 </div>
-                <h2 
-                  className="section-title"
-                  dangerouslySetInnerHTML={{ __html: t('contactTitle') }}
-                />
+                <h2 className="section-title">{t('contactTitle')}</h2>
                 <p
                   className="section-desc"
                   style={{ marginTop: "0.5rem", maxWidth: 420 }}
