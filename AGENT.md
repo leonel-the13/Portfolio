@@ -60,11 +60,12 @@ Portfolio/
 
 ## 🧩 Componentes em page.tsx
 
-| Componente | Linha | Descrição |
-|---|---|---|
-| `ProjectCarousel` | ~280 | Carousel automático (5s), dots + nav buttons, fade transition |
-| `HackathonModal` | ~365 | Modal com galeria grid 2 colunas, equipa, meta |
-| `Home` (main) | ~564 | Componente principal, renderiza tudo |
+| Componente | Descrição |
+|---|---|
+| `ProjectCarousel` | Carousel automático (5s), dots + nav buttons, fade transition |
+| `HackathonModal` | Modal com carousel e dots indicator, equipa, meta |
+| `ProjectDrawer` | Painel lateral que surge do lado direito com carousel de imagens, stack, função, desafios e resultados do projecto |
+| `Home` (main) | Componente principal, renderiza tudo |
 
 **Sections:** Hero → About → Skills → Projects → Hackathons → Contact
 
@@ -118,12 +119,15 @@ Portfolio/
 - Adicionadas todas as imagens disponíveis nos arrays `images[]` dos projetos
 - Populados todos os `gallery[]` dos hackathons com imagens existentes
 
-### 2026-07-10 (Sessão 2) — EM PROGRESSO
+### 2026-07-10 (Sessão 2) — CONCLUÍDO
 - Criado `AGENT.md` e `task.md`.
 - Adicionado hackathon ANGOTIC 2026 (2º lugar, Nacional, 3 membros: Victor, Joisson, Jorge)
 - Implementadas transições de crossfade suaves no `ProjectCarousel` e no `HackathonImageCarousel` via Framer Motion.
 - Adicionado auto-rotate nos cards dos hackathons.
-- Pendente: Hero split layout, Project detail drawer, Modal carousel upgrade, visual polish.
+- Redesenhado Hero layout para modelo de duas colunas (Split columns) com badges flutuantes e stats em formato de cards.
+- Implementado Project detail drawer lateral, ativado ao clicar num card de projecto.
+- Atualizado HackathonModal com slideshow interactivo com dots e setas de navegação.
+- Adicionado efeitos de hover glow personalizados na lista de Skills (corresponde a cor de cada tecnologia simples-icons), barra de progresso de scroll no topo da página e borda animada (hue-gradient rotation) na foto de perfil da secção About.
 
 ---
 
