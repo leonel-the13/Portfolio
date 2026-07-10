@@ -84,20 +84,20 @@ const TRANSLATIONS = {
     heroStatsProjects: "Projetos",
     heroStatsTechs: "Tecnologias",
     aboutTitle: "Sobre mim",
-    aboutSubtitle: "Minha Jornada",
-    aboutDesc: "Desenvolvedor focado em construir soluções robustas, escaláveis e eficientes, com forte conhecimento em backend e infraestrutura.",
+    aboutSubtitle: "Minha <span class='highlight-pill'>Jornada</span>",
+    aboutDesc: "Desenvolvedor Backend com foco em APIs RESTful escaláveis, arquitetura de servidores e infraestrutura containerizada. Experiente em Java (Spring Boot) e Node.js (NestJS), aplicando autenticação JWT, cache com Redis e comunicação em tempo real. Entusiasta de cibersegurança, DevOps e observabilidade.",
     profileTitle: "Perfil",
     languagesTitle: "Idiomas",
-    skillsTitle: "Tecnologias com que trabalho",
+    skillsTitle: "Tecnologias com que <span class='highlight-pill'>trabalho</span>",
     skillsLabel: "Minha Stack",
     skillsDesc: "Ferramentas e linguagens que utilizo no dia-a-dia para desenvolvimento backend, DevOps e infraestrutura.",
-    projectsTitle: "Trabalhos Selecionados",
+    projectsTitle: "Trabalhos <span class='highlight-pill'>Selecionados</span>",
     projectsLabel: "Projetos",
     projectsDesc: "Projetos com arquitetura limpa, responsabilidade bem definida e profundidade técnica real.",
-    hackathonsTitle: "Hackathons e Prémios",
+    hackathonsTitle: "Hackathons e <span class='highlight-pill'>Prémios</span>",
     hackathonsLabel: "Competições",
     hackathonsDesc: "Resultados obtidos em competições nacionais e internacionais.",
-    contactTitle: "Vamos trabalhar juntos",
+    contactTitle: "Vamos trabalhar <span class='highlight-pill'>juntos</span>",
     contactLabel: "Contacto",
     contactDesc: "Tem um projeto em mente, quer discutir arquitetura ou simplesmente conectar-se? Entre em contacto e responderei brevemente.",
     footerText: "Victor Kangombe. Construído com Next.js",
@@ -147,20 +147,20 @@ const TRANSLATIONS = {
     heroStatsProjects: "Projects",
     heroStatsTechs: "Technologies",
     aboutTitle: "About me",
-    aboutSubtitle: "My Journey",
-    aboutDesc: "Developer focused on building robust, scalable, and efficient solutions, with strong knowledge in backend and infrastructure.",
+    aboutSubtitle: "My <span class='highlight-pill'>Journey</span>",
+    aboutDesc: "Backend Developer focused on building scalable REST APIs, server-side architecture, and containerized infrastructure. Experienced with Java (Spring Boot) and Node.js (NestJS), applying JWT authentication, Redis caching, and real-time communication. Enthusiast of cybersecurity, DevOps, and observability.",
     profileTitle: "Profile",
     languagesTitle: "Languages",
-    skillsTitle: "Technologies I work with",
+    skillsTitle: "Technologies I <span class='highlight-pill'>work</span> with",
     skillsLabel: "Tech Stack",
     skillsDesc: "Tools and languages I use daily for backend development, DevOps, and infrastructure.",
-    projectsTitle: "Selected work",
+    projectsTitle: "Selected <span class='highlight-pill'>work</span>",
     projectsLabel: "Projects",
     projectsDesc: "Projects with clear architecture, well-defined responsibility, and real technical depth.",
-    hackathonsTitle: "Hackathons & Awards",
+    hackathonsTitle: "Hackathons & <span class='highlight-pill'>Awards</span>",
     hackathonsLabel: "Competitions",
     hackathonsDesc: "Results from national and international competitions.",
-    contactTitle: "Let's work together",
+    contactTitle: "Let's work <span class='highlight-pill'>together</span>",
     contactLabel: "Contact",
     contactDesc: "Have a project in mind, want to discuss architecture, or just connect? Reach out and I'll respond promptly.",
     footerText: "Victor Kangombe. Built with Next.js",
@@ -1520,9 +1520,11 @@ export default function Home() {
               <StarIcon />
               {t('aboutTitle')}
             </motion.div>
-            <motion.h2 variants={fadeUp} className="section-title">
-              {t('aboutSubtitle')}
-            </motion.h2>
+            <motion.h2 
+              variants={fadeUp} 
+              className="section-title"
+              dangerouslySetInnerHTML={{ __html: t('aboutSubtitle') }}
+            />
           </motion.div>
 
           <div className="about-grid-improved">
@@ -1564,10 +1566,15 @@ export default function Home() {
             {/* Right Column: Dynamic Screen/Tabs container */}
             <motion.div
               className="about-tab-container card"
+              layout
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+              transition={{ 
+                opacity: { duration: 0.5, delay: 0.2 },
+                y: { duration: 0.5, delay: 0.2 },
+                layout: { type: "spring", stiffness: 300, damping: 30 }
+              }}
             >
               <div className="about-tabs-header">
                 <button 
@@ -1594,63 +1601,73 @@ export default function Home() {
               </div>
 
               <div className="about-tab-content">
-                {activeAboutTab === 'bio' && (
-                  <div className="tab-pane-bio">
-                    <p className="about-bio-text">{t('aboutDesc')}</p>
-                    <div className="about-languages-block">
-                      <h4 className="about-sub-heading">{t('languagesTitle')}</h4>
-                      <ul className="about-list">
-                        <li>{t('langPt')}</li>
-                        <li>{t('langEn')}</li>
-                      </ul>
-                    </div>
-                  </div>
-                )}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeAboutTab}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {activeAboutTab === 'bio' && (
+                      <div className="tab-pane-bio">
+                        <p className="about-bio-text">{t('aboutDesc')}</p>
+                        <div className="about-languages-block">
+                          <h4 className="about-sub-heading">{t('languagesTitle')}</h4>
+                          <ul className="about-list">
+                            <li>{t('langPt')}</li>
+                            <li>{t('langEn')}</li>
+                          </ul>
+                        </div>
+                      </div>
+                    )}
 
-                {activeAboutTab === 'education' && (
-                  <div className="tab-pane-timeline">
-                    <div className="timeline-item">
-                      <span className="timeline-dot" />
-                      <div className="timeline-meta">
-                        <span className="timeline-date">{t('eduDate1')}</span>
-                        <h4 className="timeline-title">{t('eduTitle1')}</h4>
-                        <span className="timeline-school">{t('eduSchool1')}</span>
+                    {activeAboutTab === 'education' && (
+                      <div className="tab-pane-timeline">
+                        <div className="timeline-item">
+                          <span className="timeline-dot" />
+                          <div className="timeline-meta">
+                            <span className="timeline-date">{t('eduDate1')}</span>
+                            <h4 className="timeline-title">{t('eduTitle1')}</h4>
+                            <span className="timeline-school">{t('eduSchool1')}</span>
+                          </div>
+                          <p className="timeline-desc">{t('eduDesc1')}</p>
+                        </div>
+                        <div className="timeline-item">
+                          <span className="timeline-dot" />
+                          <div className="timeline-meta">
+                            <span className="timeline-date">{t('eduDate2')}</span>
+                            <h4 className="timeline-title">{t('eduTitle2')}</h4>
+                            <span className="timeline-school">{t('eduSchool2')}</span>
+                          </div>
+                          <p className="timeline-desc">{t('eduDesc2')}</p>
+                        </div>
+                        <div className="timeline-item">
+                          <span className="timeline-dot" />
+                          <div className="timeline-meta">
+                            <span className="timeline-date">{t('eduDate3')}</span>
+                            <h4 className="timeline-title">{t('eduTitle3')}</h4>
+                            <span className="timeline-school">{t('eduSchool3')}</span>
+                          </div>
+                          <p className="timeline-desc">{t('eduDesc3')}</p>
+                        </div>
+                        <div className="timeline-item">
+                          <span className="timeline-dot" />
+                          <div className="timeline-meta">
+                            <span className="timeline-date">{t('eduDate4')}</span>
+                            <h4 className="timeline-title">{t('eduTitle4')}</h4>
+                            <span className="timeline-school">{t('eduSchool4')}</span>
+                          </div>
+                          <p className="timeline-desc">{t('eduDesc4')}</p>
+                        </div>
                       </div>
-                      <p className="timeline-desc">{t('eduDesc1')}</p>
-                    </div>
-                    <div className="timeline-item">
-                      <span className="timeline-dot" />
-                      <div className="timeline-meta">
-                        <span className="timeline-date">{t('eduDate2')}</span>
-                        <h4 className="timeline-title">{t('eduTitle2')}</h4>
-                        <span className="timeline-school">{t('eduSchool2')}</span>
-                      </div>
-                      <p className="timeline-desc">{t('eduDesc2')}</p>
-                    </div>
-                    <div className="timeline-item">
-                      <span className="timeline-dot" />
-                      <div className="timeline-meta">
-                        <span className="timeline-date">{t('eduDate3')}</span>
-                        <h4 className="timeline-title">{t('eduTitle3')}</h4>
-                        <span className="timeline-school">{t('eduSchool3')}</span>
-                      </div>
-                      <p className="timeline-desc">{t('eduDesc3')}</p>
-                    </div>
-                    <div className="timeline-item">
-                      <span className="timeline-dot" />
-                      <div className="timeline-meta">
-                        <span className="timeline-date">{t('eduDate4')}</span>
-                        <h4 className="timeline-title">{t('eduTitle4')}</h4>
-                        <span className="timeline-school">{t('eduSchool4')}</span>
-                      </div>
-                      <p className="timeline-desc">{t('eduDesc4')}</p>
-                    </div>
-                  </div>
-                )}
+                    )}
 
-                {activeAboutTab === 'terminal' && (
-                  <TerminalConsole lang={lang} />
-                )}
+                    {activeAboutTab === 'terminal' && (
+                      <TerminalConsole lang={lang} />
+                    )}
+                  </motion.div>
+                </AnimatePresence>
               </div>
             </motion.div>
           </div>
@@ -1670,9 +1687,11 @@ export default function Home() {
               <StarIcon />
               {t('skillsLabel')}
             </motion.div>
-            <motion.h2 variants={fadeUp} className="section-title">
-              {t('skillsTitle')}
-            </motion.h2>
+            <motion.h2 
+              variants={fadeUp} 
+              className="section-title"
+              dangerouslySetInnerHTML={{ __html: t('skillsTitle') }}
+            />
             <motion.p variants={fadeUp} className="section-desc">
               {t('skillsDesc')}
             </motion.p>
@@ -1719,9 +1738,11 @@ export default function Home() {
               <StarIcon />
               {t('projectsLabel')}
             </motion.div>
-            <motion.h2 variants={fadeUp} className="section-title">
-              {t('projectsTitle')}
-            </motion.h2>
+            <motion.h2 
+              variants={fadeUp} 
+              className="section-title"
+              dangerouslySetInnerHTML={{ __html: t('projectsTitle') }}
+            />
             <motion.p variants={fadeUp} className="section-desc">
               {t('projectsDesc')}
             </motion.p>
@@ -1798,9 +1819,11 @@ export default function Home() {
               <StarIcon />
               {t('hackathonsLabel')}
             </motion.div>
-            <motion.h2 variants={fadeUp} className="section-title">
-              {t('hackathonsTitle')}
-            </motion.h2>
+            <motion.h2 
+              variants={fadeUp} 
+              className="section-title"
+              dangerouslySetInnerHTML={{ __html: t('hackathonsTitle') }}
+            />
             <motion.p variants={fadeUp} className="section-desc">
               {t('hackathonsDesc')}
             </motion.p>
@@ -1884,7 +1907,10 @@ export default function Home() {
                   <StarIcon />
                   {t('contactLabel')}
                 </div>
-                <h2 className="section-title">{t('contactTitle')}</h2>
+                <h2 
+                  className="section-title"
+                  dangerouslySetInnerHTML={{ __html: t('contactTitle') }}
+                />
                 <p
                   className="section-desc"
                   style={{ marginTop: "0.5rem", maxWidth: 420 }}
