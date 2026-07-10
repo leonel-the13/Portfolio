@@ -30,15 +30,17 @@ const MATRIX_CHARS = "01アイウエオカキクケコサシスセソ";
 const MATRIX_COLUMNS = 24;
 
 /* ─── Types ─── */
+type Translated = string | { pt: string; en: string };
+
 type ProjectDetails = {
-  role?: string;
-  challenges?: string;
-  outcome?: string;
+  role?: Translated;
+  challenges?: Translated;
+  outcome?: Translated;
 };
 
 type Project = {
   name: string;
-  description: string;
+  description: Translated;
   stack: string[];
   images: string[];
   github?: string;
@@ -59,7 +61,7 @@ type Hackathon = {
   scope: string;
   image: string;
   gallery: string[];
-  description: string;
+  description: Translated;
   team: "solo" | "team";
   members?: HackathonMember[];
 };
@@ -71,6 +73,144 @@ type MatrixColumn = {
   duration: string;
   delay: string;
 };
+
+/* ─── Translations ─── */
+const TRANSLATIONS = {
+  pt: {
+    availableForWork: "Disponível para novos projetos",
+    viewProjects: "Ver Projetos",
+    getInTouch: "Entrar em contacto",
+    heroStatsHackathons: "Hackathons",
+    heroStatsProjects: "Projetos",
+    heroStatsExp: "Anos Exp",
+    aboutTitle: "Sobre mim",
+    aboutSubtitle: "Minha Jornada",
+    aboutDesc: "Desenvolvedor focado em construir soluções robustas, escaláveis e eficientes, com forte conhecimento em backend e infraestrutura.",
+    profileTitle: "Perfil",
+    languagesTitle: "Idiomas",
+    skillsTitle: "Tecnologias com que trabalho",
+    skillsLabel: "Minha Stack",
+    skillsDesc: "Ferramentas e linguagens que utilizo no dia-a-dia para desenvolvimento backend, DevOps e infraestrutura.",
+    projectsTitle: "Trabalhos Selecionados",
+    projectsLabel: "Projetos",
+    projectsDesc: "Projetos com arquitetura limpa, responsabilidade bem definida e profundidade técnica real.",
+    hackathonsTitle: "Hackathons e Prémios",
+    hackathonsLabel: "Competições",
+    hackathonsDesc: "Resultados obtidos em competições nacionais e internacionais.",
+    contactTitle: "Vamos trabalhar juntos",
+    contactLabel: "Contacto",
+    contactDesc: "Tem um projeto em mente, quer discutir arquitetura ou simplesmente conectar-se? Entre em contacto e responderei brevemente.",
+    footerText: "Victor Kangombe. Construído com Next.js",
+    drawerSubtitle: "Detalhes do Projeto",
+    drawerRole: "Minha Função:",
+    drawerTechStack: "Tecnologias:",
+    drawerOverview: "Visão Geral",
+    drawerChallenges: "Desafios Técnicos",
+    drawerOutcome: "Resultado Chave",
+    modalTeamMembers: "Membros da Equipa",
+    modalScope: "Escopo",
+    modalTeamType: "Tipo de Equipa",
+    modalSolo: "Solo",
+    modalTeam: "Equipa",
+    tabBio: "Bio",
+    tabExperience: "Experiência",
+    tabEducation: "Educação",
+    tabConsole: "Console CLI",
+    expTitle1: "Engenheiro de Backend Freelancer",
+    expCompany1: "Autónomo",
+    expDate1: "2024 - Presente",
+    expDesc1: "Desenvolvimento de APIs RESTful usando Spring Boot e NestJS, otimização de bancos de dados PostgreSQL e orquestração de containers com Docker.",
+    expTitle2: "Desenvolvedor Backend (Estágio)",
+    expCompany2: "Tech Solutions",
+    expDate2: "2023 - 2024",
+    expDesc2: "Auxílio no desenvolvimento de microsserviços, automação de testes de integração e configuração de servidores proxy NGINX.",
+    eduTitle1: "Engenharia Informática",
+    eduSchool1: "Instituto Superior de Tecnologias",
+    eduDate1: "2021 - 2025",
+    eduDesc1: "Foco em algoritmos, arquitetura de computadores, compiladores e redes de computadores.",
+    eduTitle2: "Certificação de Hardening de Sistemas",
+    eduSchool2: "42 Luanda",
+    eduDate2: "2023",
+    eduDesc2: "Hardening de Linux Debian, gestão de acessos SSH, UFW, regras sudo e integridade de sistemas corporativos.",
+    langPt: "Português · Nativo",
+    langEn: "Inglês · Intermédio",
+    consoleWelcome: "Consola de Programador do Victor v1.0.0. Digite 'help' para comandos.",
+    consoleHelp: "Comandos: help, about, skills, contact, clear, secret",
+    consoleAbout: "Victor Kangombe: Desenvolvedor Backend / DevOps focado em criar APIs seguras, containerização e redes isoladas.",
+    consoleSecret: "🐇 Siga o coelho branco... Efeito matrix activo!",
+    consoleNotRecognized: "Comando não reconhecido: {cmd}. Digite 'help' para ajuda."
+  },
+  en: {
+    availableForWork: "Available for new projects",
+    viewProjects: "View Projects",
+    getInTouch: "Get in Touch",
+    heroStatsHackathons: "Hackathons",
+    heroStatsProjects: "Projects",
+    heroStatsExp: "Years Exp",
+    aboutTitle: "About me",
+    aboutSubtitle: "My Journey",
+    aboutDesc: "Developer focused on building robust, scalable, and efficient solutions, with strong knowledge in backend and infrastructure.",
+    profileTitle: "Profile",
+    languagesTitle: "Languages",
+    skillsTitle: "Technologies I work with",
+    skillsLabel: "Tech Stack",
+    skillsDesc: "Tools and languages I use daily for backend development, DevOps, and infrastructure.",
+    projectsTitle: "Selected work",
+    projectsLabel: "Projects",
+    projectsDesc: "Projects with clear architecture, well-defined responsibility, and real technical depth.",
+    hackathonsTitle: "Hackathons & Awards",
+    hackathonsLabel: "Competitions",
+    hackathonsDesc: "Results from national and international competitions.",
+    contactTitle: "Let's work together",
+    contactLabel: "Contact",
+    contactDesc: "Have a project in mind, want to discuss architecture, or just connect? Reach out and I'll respond promptly.",
+    footerText: "Victor Kangombe. Built with Next.js",
+    drawerSubtitle: "Project Detail",
+    drawerRole: "My Role:",
+    drawerTechStack: "Tech Stack:",
+    drawerOverview: "Overview",
+    drawerChallenges: "Technical Challenges",
+    drawerOutcome: "Key Outcome",
+    modalTeamMembers: "Team Members",
+    modalScope: "Scope",
+    modalTeamType: "Team Type",
+    modalSolo: "Solo",
+    modalTeam: "Team",
+    tabBio: "Bio",
+    tabExperience: "Experience",
+    tabEducation: "Education",
+    tabConsole: "CLI Console",
+    expTitle1: "Freelance Backend Engineer",
+    expCompany1: "Self-employed",
+    expDate1: "2024 - Present",
+    expDesc1: "Developing RESTful APIs using Spring Boot and NestJS, optimizing PostgreSQL databases, and orchestrating containers with Docker Compose.",
+    expTitle2: "Backend Developer (Intern)",
+    expCompany2: "Tech Solutions",
+    expDate2: "2023 - 2024",
+    expDesc2: "Assisted in building microservices, automating integration tests, and configuring NGINX reverse proxies.",
+    eduTitle1: "B.S. in Computer Engineering",
+    eduSchool1: "High Institute of Technologies",
+    eduDate1: "2021 - 2025",
+    eduDesc1: "Focused on algorithms, computer architecture, compilers, and computer networking.",
+    eduTitle2: "System Hardening Certification",
+    eduSchool2: "42 Luanda",
+    eduDate2: "2023",
+    eduDesc2: "Hardening Debian Linux, managing SSH accesses, configuring UFW rules, and ensuring system integrity.",
+    langPt: "Portuguese · Native",
+    langEn: "English · Intermediate",
+    consoleWelcome: "Victor's Developer Console v1.0.0. Type 'help' for commands.",
+    consoleHelp: "Commands: help, about, skills, contact, clear, secret",
+    consoleAbout: "Victor Kangombe: Backend / DevOps developer focusing on secure APIs, containerization, and network isolation.",
+    consoleSecret: "🐇 Follow the white rabbit... Matrix mode active!",
+    consoleNotRecognized: "Command not recognized: {cmd}. Type 'help' for help."
+  }
+};
+
+function getText(field: Translated | undefined, lang: 'pt' | 'en'): string {
+  if (!field) return "";
+  if (typeof field === "string") return field;
+  return field[lang] || field.en || "";
+}
 
 /* ─── Data ─── */
 const TECH_STACK = [
@@ -96,8 +236,10 @@ const TECH_STACK = [
 const PROJECTS: Project[] = [
   {
     name: "Black Hole Academy",
-    description:
-      "Backend contribution with Java 17 and Spring Boot, focused on REST APIs, JWT authentication, and containerized infrastructure with Docker and NGINX.",
+    description: {
+      pt: "Contribuição no backend com Java 17 e Spring Boot, focada em APIs REST, autenticação JWT e infraestrutura containerizada com Docker e NGINX.",
+      en: "Backend contribution with Java 17 and Spring Boot, focused on REST APIs, JWT authentication, and containerized infrastructure with Docker and NGINX."
+    },
     stack: ["Java 17", "Spring Boot", "PostgreSQL", "Docker", "WAF"],
     images: [
       "/projects/black-hole-academy/cover.png",
@@ -109,71 +251,135 @@ const PROJECTS: Project[] = [
       "/projects/black-hole-academy/FA6EA684-AF93-4B43-A4CB-EFA667358C76.JPG",
     ],
     details: {
-      role: "Backend Engineer",
-      challenges: "Designing a secure JWT authentication system and configuring the NGINX reverse proxy to handle high concurrency while keeping container overhead minimal.",
-      outcome: "Successfully containerized the application, resulting in predictable deployments and a robust, secure API layer with JWT-based route protection."
+      role: {
+        pt: "Engenheiro de Backend",
+        en: "Backend Engineer"
+      },
+      challenges: {
+        pt: "Desenhar um sistema seguro de autenticação JWT e configurar o proxy reverso NGINX para lidar com alta concorrência com o mínimo de sobrecarga de containers.",
+        en: "Designing a secure JWT authentication system and configuring the NGINX reverse proxy to handle high concurrency while keeping container overhead minimal."
+      },
+      outcome: {
+        pt: "Containerização bem sucedida do aplicativo, resultando em implantações previsíveis e uma camada de API robusta e segura com proteção de rotas JWT.",
+        en: "Successfully containerized the application, resulting in predictable deployments and a robust, secure API layer with JWT-based route protection."
+      }
     }
   },
   {
     name: "Cesta Digital",
-    description:
-      "Donation platform backend with authentication, real-time campaign tracking, Redis caching, and monitoring.",
+    description: {
+      pt: "Backend de plataforma de doações com autenticação, monitoramento de campanhas em tempo real, cache Redis e monitoria de métricas.",
+      en: "Donation platform backend with authentication, real-time campaign tracking, Redis caching, and monitoring."
+    },
     stack: ["NestJS", "Prisma", "Redis", "JWT"],
     images: ["/projects/cesta-digital/cover.png"],
     details: {
-      role: "Backend Developer",
-      challenges: "Implementing a low-latency caching layer with Redis to ensure real-time campaign statistics are updated instantly without overloading the database.",
-      outcome: "Achieved sub-10ms response times for active campaign endpoints and ensured full data consistency using Prisma ORM."
+      role: {
+        pt: "Desenvolvedor Backend",
+        en: "Backend Developer"
+      },
+      challenges: {
+        pt: "Implementar uma camada de cache de baixa latência usando Redis para garantir estatísticas atualizadas instantaneamente sem sobrecarregar a base de dados.",
+        en: "Implementing a low-latency caching layer with Redis to ensure real-time campaign statistics are updated instantly without overloading the database."
+      },
+      outcome: {
+        pt: "Resposta inferior a 10ms nos endpoints de campanhas ativas e consistência total de dados usando Prisma ORM.",
+        en: "Achieved sub-10ms response times for active campaign endpoints and ensured full data consistency using Prisma ORM."
+      }
     }
   },
   {
     name: "Accessible Tourism Map",
-    description:
-      "Web platform with interactive map, accessibility filters, and Flask API serving geo-data with KPI dashboards.",
+    description: {
+      pt: "Plataforma web com mapa interativo, filtros de acessibilidade e API Flask que serve dados geográficos com dashboards de KPI.",
+      en: "Web platform with interactive map, accessibility filters, and Flask API serving geo-data with KPI dashboards."
+    },
     stack: ["Python", "Flask", "Folium", "Leaflet"],
     images: ["/projects/tourism-map/cover.png"],
     github: "https://github.com/leonel-the13/MTA",
     details: {
-      role: "Fullstack Developer",
-      challenges: "Parsing and rendering complex geographical JSON datasets on a mobile-friendly map interface using Leaflet and Folium.",
-      outcome: "Created a fully functional accessibility map for tourists, integrated with Flask and offering highly responsive filtering options."
+      role: {
+        pt: "Desenvolvedor Fullstack",
+        en: "Fullstack Developer"
+      },
+      challenges: {
+        pt: "Processar e renderizar conjuntos complexos de dados geográficos JSON numa interface de mapa responsiva e amigável para dispositivos móveis usando Leaflet e Folium.",
+        en: "Parsing and rendering complex geographical JSON datasets on a mobile-friendly map interface using Leaflet and Folium."
+      },
+      outcome: {
+        pt: "Criação de um mapa funcional de acessibilidade para turistas, integrado com Flask e oferecendo opções de filtragem ágeis.",
+        en: "Created a fully functional accessibility map for tourists, integrated with Flask and offering highly responsive filtering options."
+      }
     }
   },
   {
     name: "Inception",
-    description:
-      "Orchestrated infrastructure: NGINX, WordPress, and MariaDB running in isolated Docker containers with custom networking.",
+    description: {
+      pt: "Infraestrutura orquestrada: NGINX, WordPress e MariaDB rodando em containers Docker isolados com rede personalizada.",
+      en: "Orchestrated infrastructure: NGINX, WordPress, and MariaDB running in isolated Docker containers with custom networking."
+    },
     stack: ["Docker", "NGINX", "MariaDB", "Docker Compose"],
     images: ["/projects/inception/cover.png"],
     github: "https://github.com/leonel-the13/inseption",
     details: {
-      role: "System Administrator / DevOps",
-      challenges: "Establishing secure multi-container networking where only the NGINX container is exposed to the host while WordPress and MariaDB communicate in a private network.",
-      outcome: "Implemented a fully isolated, automated container configuration script with custom Docker networking rules and persistent volumes."
+      role: {
+        pt: "Administrador de Sistemas / DevOps",
+        en: "System Administrator / DevOps"
+      },
+      challenges: {
+        pt: "Estabelecer comunicação de rede segura multi-container onde apenas o container NGINX fica exposto ao host enquanto WordPress e MariaDB comunicam em rede privada.",
+        en: "Establishing secure multi-container networking where only the NGINX container is exposed to the host while WordPress and MariaDB communicate in a private network."
+      },
+      outcome: {
+        pt: "Configuração isolada e automatizada com Docker Compose e volumes persistentes criptografados.",
+        en: "Implemented a fully isolated, automated container configuration script with custom Docker networking rules and persistent volumes."
+      }
     }
   },
   {
     name: "Webserver",
-    description:
-      "HTTP engine built from scratch with manual parsing, raw sockets, and typed responses. Compliant with HTTP/1.1.",
+    description: {
+      pt: "Mecanismo HTTP construído de raiz com análise manual de pedidos, sockets e respostas tipadas. Compatível com HTTP/1.1.",
+      en: "HTTP engine built from scratch with manual parsing, raw sockets, and typed responses. Compliant with HTTP/1.1."
+    },
     stack: ["C++ 98", "Sockets", "HTTP/1.1"],
     images: ["/projects/webserver/cover.png"],
     details: {
-      role: "C++ Software Engineer",
-      challenges: "Handling multiple concurrent TCP client connections asynchronously without blocking the main program thread, using socket selectors (select/poll).",
-      outcome: "Built a fully functional HTTP/1.1 web server from scratch capable of handling file uploads, static file serving, and basic CGI scripts."
+      role: {
+        pt: "Engenheiro de Software C++",
+        en: "C++ Software Engineer"
+      },
+      challenges: {
+        pt: "Lidar com múltiplas conexões simultâneas de clientes TCP de forma assíncrona sem bloquear a execução da thread principal, usando seletores de socket (select/poll).",
+        en: "Handling multiple concurrent TCP client connections asynchronously without blocking the main program thread, using socket selectors (select/poll)."
+      },
+      outcome: {
+        pt: "Construção de um servidor web HTTP/1.1 funcional capaz de lidar com uploads de ficheiros, ficheiros estáticos e scripts CGI simples.",
+        en: "Built a fully functional HTTP/1.1 web server from scratch capable of handling file uploads, static file serving, and basic CGI scripts."
+      }
     }
   },
   {
     name: "Born2beroot",
-    description:
-      "Linux hardening project: user permissions, SSH configuration, firewall rules, and security policies.",
+    description: {
+      pt: "Projeto de segurança de servidores Linux: políticas de permissões, acessos SSH, regras de firewall e políticas de senha estritas.",
+      en: "Linux hardening project: user permissions, SSH configuration, firewall rules, and security policies."
+    },
     stack: ["Linux", "Security", "SSH", "UFW"],
     images: ["/projects/born2beroot/cover.png"],
     details: {
-      role: "System Security Analyst",
-      challenges: "Configuring strict sudoer policies, setting up a secure UFW firewall, and configuring dynamic SSH access policies while preserving system stability.",
-      outcome: "Successfully audited and hardened a Debian virtual machine, achieving full compliance with strict security requirements."
+      role: {
+        pt: "Analista de Segurança de Sistemas",
+        en: "System Security Analyst"
+      },
+      challenges: {
+        pt: "Configurar políticas sudoers rígidas, configurar um firewall UFW ativo e regras dinâmicas de SSH mantendo a estabilidade operacional do sistema.",
+        en: "Configuring strict sudoer policies, setting up a secure UFW firewall, and configuring dynamic SSH access policies while preserving system stability."
+      },
+      outcome: {
+        pt: "Auditoria e hardening bem-sucedidos de uma máquina virtual Debian, cumprindo rigorosos requisitos de segurança.",
+        en: "Successfully audited and hardened a Debian virtual machine, achieving full compliance with strict security requirements."
+      }
     }
   },
 ];
@@ -193,33 +399,18 @@ const HACKATHONS: Hackathon[] = [
       "/hackathons/hackathon-ostja/CB8DB85C-3CD1-4B14-A29E-D8826D8F5BFF.JPG",
       "/hackathons/hackathon-ostja/Screenshot 2026-04-14 at 20.41.56.PNG",
     ],
-    description:
-      "National hackathon organized by OSTJA. Developed a full solution addressing real-world infrastructure challenges.",
+    description: {
+      pt: "Competição nacional organizada pela OSTJA. Desenvolvemos uma solução robusta respondendo a desafios reais de infraestrutura.",
+      en: "National hackathon organized by OSTJA. Developed a full solution addressing real-world infrastructure challenges."
+    },
     team: "team",
     members: [
-      {
-        name: "Vicor Kangombe",
-      },
-      {
-        name: "Joisson Miguel",
-        linkedin: "https://www.linkedin.com/in/joisson-miguel",
-      },
-      {
-        name: "Oriza Ebo",
-        linkedin: "https://www.linkedin.com/in/orisa-melzira-ebo-aab95a267",
-      },
-      {
-        name: "Willfredy Vieira Dias",
-        linkedin: "https://www.linkedin.com/in/willfredy-vieira-dias",
-      },
-      {
-        name: "Jessé Inglês",
-        linkedin: "https://www.linkedin.com/in/jess%C3%A9ingl%C3%AAs",
-      },
-      {
-        name: "Sebastião Sukuakueche  ",
-        linkedin: "https://www.linkedin.com/in/sebastiao-sukuakueche",
-      },
+      { name: "Vicor Kangombe" },
+      { name: "Joisson Miguel", linkedin: "https://www.linkedin.com/in/joisson-miguel" },
+      { name: "Oriza Ebo", linkedin: "https://www.linkedin.com/in/orisa-melzira-ebo-aab95a267" },
+      { name: "Willfredy Vieira Dias", linkedin: "https://www.linkedin.com/in/willfredy-vieira-dias" },
+      { name: "Jessé Inglês", linkedin: "https://www.linkedin.com/in/jess%C3%A9ingl%C3%AAs" },
+      { name: "Sebastião Sukuakueche", linkedin: "https://www.linkedin.com/in/sebastiao-sukuakueche" },
     ],
   },
   {
@@ -236,19 +427,15 @@ const HACKATHONS: Hackathon[] = [
       "/hackathons/angotic2026/IMG_9614.JPG",
       "/hackathons/angotic2026/IMG_9615.jpeg",
     ],
-    description:
-      "National hackathon held at the ANGOTIC 2026 conference. Developed a full solution with focus on technology and infrastructure.",
+    description: {
+      pt: "Hackathon de nível nacional inserido na conferência internacional ANGOTIC 2026. Desenvolvemos uma plataforma focada em tecnologia e conectividade.",
+      en: "National hackathon held at the ANGOTIC 2026 conference. Developed a full solution with focus on technology and infrastructure."
+    },
     team: "team",
     members: [
       { name: "Victor Kangombe" },
-      {
-        name: "Joisson Miguel",
-        linkedin: "https://www.linkedin.com/in/joisson-miguel",
-      },
-      {
-        name: "Jorge Carvalho",
-        linkedin: "https://www.linkedin.com/in/jorge-de-carvalho-366899333",
-      },
+      { name: "Joisson Miguel", linkedin: "https://www.linkedin.com/in/joisson-miguel" },
+      { name: "Jorge Carvalho", linkedin: "https://www.linkedin.com/in/jorge-de-carvalho-366899333" },
     ],
   },
   {
@@ -266,8 +453,10 @@ const HACKATHONS: Hackathon[] = [
       "/hackathons/africell-code-fast/4E768EB8-E82F-4147-B795-8D4F4EFFD1E1.JPG",
       "/hackathons/africell-code-fast/c06c1f88-8251-43a6-93e1-2ff3cfe6123f.JPG",
     ],
-    description:
-      "Speed coding competition sponsored by Africell. System Design, Build and Debug.",
+    description: {
+      pt: "Competição de programação rápida patrocinada pela Africell. Focada em design de algoritmos, velocidade de escrita e depuração de erros.",
+      en: "Speed coding competition sponsored by Africell. System Design, Build and Debug."
+    },
     team: "solo",
     members: [],
   },
@@ -284,31 +473,18 @@ const HACKATHONS: Hackathon[] = [
       "/hackathons/nasa-space-apps/IMG_5783.jpeg",
       "/hackathons/nasa-space-apps/8080748F-8DE8-4F5F-81F9-46AC12DCE179.JPG",
     ],
-    description:
-      "International hackathon by NASA. Worked on a solution leveraging open data for space and earth science applications.",
+    description: {
+      pt: "Hackathon internacional promovido pela NASA. Desenvolvemos uma plataforma que processa dados públicos de satélites para fins científicos e terrestres.",
+      en: "International hackathon by NASA. Worked on a solution leveraging open data for space and earth science applications."
+    },
     team: "team",
     members: [
       { name: "Vicor Kangombe" },
-      {
-        name: "Oriza Ebo",
-        linkedin: "https://www.linkedin.com/in/orisa-melzira-ebo-aab95a267",
-      },
-      {
-        name: "Ângela Amaro",
-        linkedin: "https://www.linkedin.com/in/angeamaro",
-      },
-      {
-        name: "Reinaldo Sambing",
-        linkedin: "https://www.linkedin.com/in/rsambing",
-      },
-      {
-        name: "Paulo Gaspar",
-        linkedin: "https://www.linkedin.com/in/opaulogaspar",
-      },
-      {
-        name: "Nuno Mendes",
-        linkedin: "https://www.linkedin.com/in/nuno-mendes-07a259253",
-      },
+      { name: "Oriza Ebo", linkedin: "https://www.linkedin.com/in/orisa-melzira-ebo-aab95a267" },
+      { name: "Ângela Amaro", linkedin: "https://www.linkedin.com/in/angeamaro" },
+      { name: "Reinaldo Sambing", linkedin: "https://www.linkedin.com/in/rsambing" },
+      { name: "Paulo Gaspar", linkedin: "https://www.linkedin.com/in/opaulogaspar" },
+      { name: "Nuno Mendes", linkedin: "https://www.linkedin.com/in/nuno-mendes-07a259253" },
     ],
   },
   {
@@ -321,19 +497,15 @@ const HACKATHONS: Hackathon[] = [
     gallery: [
       "/hackathons/isptec-programming/cover.jpg",
     ],
-    description:
-      "Competitive programming contest at ISPTEC university, focused on algorithms and problem-solving.",
+    description: {
+      pt: "Concurso universitário de programação competitiva do ISPTEC, resolvendo problemas complexos baseados em estruturas de dados e otimização.",
+      en: "Competitive programming contest at ISPTEC university, focused on algorithms and problem-solving."
+    },
     team: "team",
     members: [
       { name: "Vicor Kangombe" },
-      {
-        name: "Reinaldo Sambing",
-        linkedin: "https://www.linkedin.com/in/rsambing",
-      },
-      {
-        name: "Jorge Carvalho",
-        linkedin: "https://www.linkedin.com/in/jorge-de-carvalho-366899333",
-      },
+      { name: "Reinaldo Sambing", linkedin: "https://www.linkedin.com/in/rsambing" },
+      { name: "Jorge Carvalho", linkedin: "https://www.linkedin.com/in/jorge-de-carvalho-366899333" },
     ],
   },
 ];
@@ -370,6 +542,91 @@ const createMatrixColumns = (): MatrixColumn[] =>
   });
 
 /* ─── Subcomponents ─── */
+
+const StarIcon = () => (
+  <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="star-decorator">
+    <path d="M12 0L14.6 9.4L24 12L14.6 14.6L12 24L9.4 14.6L0 12L9.4 9.4L12 0Z" />
+  </svg>
+);
+
+function TerminalConsole({ lang }: { lang: 'pt' | 'en' }) {
+  const [history, setHistory] = useState<string[]>([]);
+  const [input, setInput] = useState('');
+  const terminalEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setHistory([
+      lang === 'pt'
+        ? TRANSLATIONS.pt.consoleWelcome
+        : TRANSLATIONS.en.consoleWelcome
+    ]);
+  }, [lang]);
+
+  const handleCommand = (e: React.FormEvent) => {
+    e.preventDefault();
+    const cmd = input.trim().toLowerCase();
+    if (!cmd) return;
+
+    let output = '';
+    if (cmd === 'help') {
+      output = lang === 'pt' ? TRANSLATIONS.pt.consoleHelp : TRANSLATIONS.en.consoleHelp;
+    } else if (cmd === 'about') {
+      output = lang === 'pt' ? TRANSLATIONS.pt.consoleAbout : TRANSLATIONS.en.consoleAbout;
+    } else if (cmd === 'skills') {
+      output = "Java:    [██████████] 90%\nDocker:  [████████░░] 80%\nNestJS:  [████████░░] 80%\nLinux:   [█████████░] 90%";
+    } else if (cmd === 'contact') {
+      output = `Email: ${CONTACT_EMAIL}\nGitHub: github.com/leonel-the13\nLinkedIn: linkedin.com/in/victor-kangombe`;
+    } else if (cmd === 'clear') {
+      setHistory([]);
+      setInput('');
+      return;
+    } else if (cmd === 'secret') {
+      output = lang === 'pt' ? TRANSLATIONS.pt.consoleSecret : TRANSLATIONS.en.consoleSecret;
+    } else {
+      output = lang === 'pt' 
+        ? TRANSLATIONS.pt.consoleNotRecognized.replace("{cmd}", cmd)
+        : TRANSLATIONS.en.consoleNotRecognized.replace("{cmd}", cmd);
+    }
+
+    setHistory(prev => [...prev, `> ${input}`, output]);
+    setInput('');
+  };
+
+  useEffect(() => {
+    if (terminalEndRef.current) {
+      terminalEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [history]);
+
+  return (
+    <div className="terminal-window">
+      <div className="terminal-header">
+        <div className="terminal-dots">
+          <span className="terminal-dot red" />
+          <span className="terminal-dot yellow" />
+          <span className="terminal-dot green" />
+        </div>
+        <span className="terminal-title">bash - victor@portfolio</span>
+      </div>
+      <div className="terminal-body">
+        {history.map((line, idx) => (
+          <pre key={idx} className="terminal-line">{line}</pre>
+        ))}
+        <form onSubmit={handleCommand} className="terminal-input-row">
+          <span className="terminal-prompt">&gt;&nbsp;</span>
+          <input 
+            type="text" 
+            value={input} 
+            onChange={e => setInput(e.target.value)} 
+            className="terminal-input"
+            placeholder="..."
+          />
+        </form>
+        <div ref={terminalEndRef} />
+      </div>
+    </div>
+  );
+}
 
 function ProjectCarousel({ images }: { images: string[] }) {
   const [current, setCurrent] = useState(0);
@@ -521,9 +778,11 @@ function HackathonImageCarousel({
 function HackathonModal({
   hackathon,
   onClose,
+  lang,
 }: {
   hackathon: Hackathon;
   onClose: () => void;
+  lang: 'pt' | 'en';
 }) {
   const [currentImg, setCurrentImg] = useState(0);
 
@@ -570,6 +829,7 @@ function HackathonModal({
                     key={currentImg}
                     src={hackathon.gallery[currentImg]}
                     alt={`${hackathon.title} image ${currentImg + 1}`}
+                    loading="lazy"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -626,7 +886,7 @@ function HackathonModal({
               lineHeight: 1.7,
             }}
           >
-            {hackathon.description}
+            {getText(hackathon.description, lang)}
           </p>
           <div className="modal-meta">
             <span className="modal-meta-item">
@@ -643,7 +903,7 @@ function HackathonModal({
               {hackathon.position}
             </span>
             <span className="modal-meta-item">
-              {hackathon.team === "solo" ? "Solo" : "Team"}
+              {hackathon.team === "solo" ? TRANSLATIONS[lang].modalSolo : TRANSLATIONS[lang].modalTeam}
             </span>
             <span className="modal-meta-item">{hackathon.scope}</span>
           </div>
@@ -651,7 +911,7 @@ function HackathonModal({
             hackathon.members &&
             hackathon.members.length > 0 && (
               <div className="modal-members">
-                <p className="modal-members-title">Team Members</p>
+                <p className="modal-members-title">{TRANSLATIONS[lang].modalTeamMembers}</p>
                 {hackathon.members.map((member, i) => (
                   <div key={i} className="modal-member">
                     <span>{member.name}</span>
@@ -677,9 +937,11 @@ function HackathonModal({
 function ProjectDrawer({
   project,
   onClose,
+  lang,
 }: {
   project: Project;
   onClose: () => void;
+  lang: 'pt' | 'en';
 }) {
   const [currentImg, setCurrentImg] = useState(0);
 
@@ -707,7 +969,7 @@ function ProjectDrawer({
       >
         <div className="drawer-header">
           <div>
-            <span className="drawer-subtitle">Project Detail</span>
+            <span className="drawer-subtitle">{TRANSLATIONS[lang].drawerSubtitle}</span>
             <h3 className="drawer-title">{project.name}</h3>
           </div>
           <button className="drawer-close" onClick={onClose} aria-label="Close">
@@ -725,6 +987,7 @@ function ProjectDrawer({
                     key={currentImg}
                     src={project.images[currentImg]}
                     alt={`${project.name} preview ${currentImg + 1}`}
+                    loading="lazy"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -771,7 +1034,7 @@ function ProjectDrawer({
                       }`}
                       onClick={() => setCurrentImg(idx)}
                     >
-                      <img src={img} alt="" />
+                      <img src={img} alt="" loading="lazy" />
                     </button>
                   ))}
                 </div>
@@ -783,13 +1046,13 @@ function ProjectDrawer({
           <div className="drawer-meta-section">
             {project.details?.role && (
               <div className="drawer-meta-row">
-                <span className="drawer-meta-label">My Role:</span>
-                <span className="drawer-meta-value">{project.details.role}</span>
+                <span className="drawer-meta-label">{TRANSLATIONS[lang].drawerRole}</span>
+                <span className="drawer-meta-value">{getText(project.details.role, lang)}</span>
               </div>
             )}
 
             <div className="drawer-meta-row">
-              <span className="drawer-meta-label">Tech Stack:</span>
+              <span className="drawer-meta-label">{TRANSLATIONS[lang].drawerTechStack}</span>
               <div className="drawer-tags">
                 {project.stack.map((tech) => (
                   <span key={tech} className="tag">
@@ -831,21 +1094,21 @@ function ProjectDrawer({
 
           <div className="drawer-details-content">
             <div className="drawer-details-block">
-              <h4>Overview</h4>
-              <p>{project.description}</p>
+              <h4>{TRANSLATIONS[lang].drawerOverview}</h4>
+              <p>{getText(project.description, lang)}</p>
             </div>
 
             {project.details?.challenges && (
               <div className="drawer-details-block">
-                <h4>Technical Challenges</h4>
-                <p>{project.details.challenges}</p>
+                <h4>{TRANSLATIONS[lang].drawerChallenges}</h4>
+                <p>{getText(project.details.challenges, lang)}</p>
               </div>
             )}
 
             {project.details?.outcome && (
               <div className="drawer-details-block">
-                <h4>Key Outcome</h4>
-                <p>{project.details.outcome}</p>
+                <h4>{TRANSLATIONS[lang].drawerOutcome}</h4>
+                <p>{getText(project.details.outcome, lang)}</p>
               </div>
             )}
           </div>
@@ -957,6 +1220,9 @@ export default function Home() {
     null,
   );
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [lang, setLang] = useState<'pt' | 'en'>('pt');
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [activeAboutTab, setActiveAboutTab] = useState<'bio' | 'experience' | 'education' | 'terminal'>('bio');
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -966,17 +1232,40 @@ export default function Home() {
   });
 
   useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+    const savedLang = localStorage.getItem('lang') as 'pt' | 'en' | null;
+    if (savedLang) setLang(savedLang);
     setMatrixColumns(createMatrixColumns());
   }, []);
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  };
+
+  const handleLangChange = (nextLang: 'pt' | 'en') => {
+    setLang(nextLang);
+    localStorage.setItem('lang', nextLang);
+  };
+
+  const t = useCallback((key: keyof typeof TRANSLATIONS.pt) => {
+    return TRANSLATIONS[lang][key] || TRANSLATIONS.en[key] || "";
+  }, [lang]);
 
   const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), []);
 
   const navItems = [
-    { label: "About", href: "#about" },
-    { label: "Skills", href: "#skills" },
-    { label: "Projects", href: "#projects" },
-    { label: "Hackathons", href: "#hackathons" },
-    { label: "Contact", href: "#contact" },
+    { label: lang === 'pt' ? 'Sobre' : 'About', href: "#about" },
+    { label: lang === 'pt' ? 'Skills' : 'Skills', href: "#skills" },
+    { label: lang === 'pt' ? 'Projetos' : 'Projects', href: "#projects" },
+    { label: lang === 'pt' ? 'Competições' : 'Hackathons', href: "#hackathons" },
+    { label: lang === 'pt' ? 'Contacto' : 'Contact', href: "#contact" },
   ];
 
   return (
@@ -1010,6 +1299,7 @@ export default function Home() {
               src="/ea9e27d6-dbae-480c-bd4b-f10d7463b5a4.JPG"
               alt="Victor Kangombe"
               className="nav-avatar"
+              loading="lazy"
             />
             <span className="nav-name">Victor Kangombe</span>
           </a>
@@ -1022,10 +1312,46 @@ export default function Home() {
             ))}
           </div>
 
-          <a href="/victor-resume-en.pdf" className="nav-cta" download>
-            <DownloadIcon />
-            Resume
-          </a>
+          <div className="nav-controls">
+            {/* Lang selector capsule */}
+            <button 
+              className="control-capsule-btn"
+              onClick={() => handleLangChange(lang === 'pt' ? 'en' : 'pt')}
+              aria-label="Toggle language"
+            >
+              {lang.toUpperCase()}
+            </button>
+
+            {/* Theme selector circle */}
+            <button 
+              className="control-circle-btn"
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+                </svg>
+              ) : (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="5" />
+                  <line x1="12" y1="1" x2="12" y2="3" />
+                  <line x1="12" y1="21" x2="12" y2="23" />
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                  <line x1="1" y1="12" x2="3" y2="12" />
+                  <line x1="21" y1="12" x2="23" y2="12" />
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+              )}
+            </button>
+
+            <a href="/victor-resume-en.pdf" className="nav-cta" download>
+              <DownloadIcon />
+              Resume
+            </a>
+          </div>
 
           <button
             className="mobile-menu-btn"
@@ -1058,6 +1384,26 @@ export default function Home() {
           >
             ↓ Download Resume
           </a>
+          <div className="mobile-menu-controls">
+            <button 
+              className="control-capsule-btn"
+              onClick={() => {
+                handleLangChange(lang === 'pt' ? 'en' : 'pt');
+                closeMobileMenu();
+              }}
+            >
+              {lang.toUpperCase()}
+            </button>
+            <button 
+              className="control-circle-btn"
+              onClick={() => {
+                toggleTheme();
+                closeMobileMenu();
+              }}
+            >
+              {theme === 'dark' ? "Light Mode" : "Dark Mode"}
+            </button>
+          </div>
         </div>
       )}
 
@@ -1075,7 +1421,7 @@ export default function Home() {
             <div className="hero-left">
               <motion.div variants={fadeUp} className="hero-badge">
                 <span className="hero-badge-dot" />
-                Available for work
+                {t('availableForWork')}
               </motion.div>
 
               <motion.h1 variants={fadeUp} className="hero-name">
@@ -1094,26 +1440,26 @@ export default function Home() {
 
               <motion.div variants={fadeUp} className="hero-actions">
                 <a href="#projects" className="btn-primary">
-                  View Projects
+                  {t('viewProjects')}
                 </a>
                 <a href="#contact" className="btn-ghost">
-                  Get in Touch
+                  {t('getInTouch')}
                 </a>
               </motion.div>
 
               {/* Stats Row */}
               <motion.div variants={fadeUp} className="hero-stats">
                 <div className="hero-stat-item">
-                  <span className="hero-stat-number">4</span>
-                  <span className="hero-stat-label">Hackathons</span>
+                  <span className="hero-stat-number">5</span>
+                  <span className="hero-stat-label">{t('heroStatsHackathons')}</span>
                 </div>
                 <div className="hero-stat-item">
                   <span className="hero-stat-number">6</span>
-                  <span className="hero-stat-label">Projects</span>
+                  <span className="hero-stat-label">{t('heroStatsProjects')}</span>
                 </div>
                 <div className="hero-stat-item">
                   <span className="hero-stat-number">2+</span>
-                  <span className="hero-stat-label">Years Exp</span>
+                  <span className="hero-stat-label">{t('heroStatsExp')}</span>
                 </div>
               </motion.div>
             </div>
@@ -1125,6 +1471,7 @@ export default function Home() {
                   src="/victor.jpg"
                   alt="Victor Kangombe"
                   className="hero-profile-img"
+                  loading="lazy"
                 />
                 <div className="hero-image-glow" />
 
@@ -1172,75 +1519,37 @@ export default function Home() {
             whileInView="show"
             viewport={{ once: true, margin: "-80px" }}
           >
-            <motion.p variants={fadeUp} className="section-label">
-              About
-            </motion.p>
+            <motion.div variants={fadeUp} className="section-capsule">
+              <StarIcon />
+              {t('aboutTitle')}
+            </motion.div>
             <motion.h2 variants={fadeUp} className="section-title">
-              Backend-focused engineer
+              {t('aboutSubtitle')}
             </motion.h2>
-            <motion.p variants={fadeUp} className="section-desc">
-              Backend Developer focused on Java (Spring Boot) and Node.js
-              (NestJS), building APIs with JWT authentication, Redis caching and
-              Docker-based infrastructure.
-            </motion.p>
           </motion.div>
 
-          <div className="about-grid">
+          <div className="about-grid-improved">
+            {/* Left Column: Profile details */}
             <motion.div
-              className="card-flat about-card"
+              className="card profile-improved-card"
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              <p className="about-card-title">Experience</p>
-              <p className="about-text">
-                Experience designing backend systems with reverse proxy (NGINX),
-                real-time communication and observability practices. Interested
-                in system reliability, DevOps and applied cybersecurity.
-              </p>
-            </motion.div>
-
-            <motion.div
-              className="card-flat about-card"
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <p className="about-card-title">Education</p>
-              <ul className="about-list">
-                <li>
-                  DevOps & Security Specialization (42 Advanced) · present
-                </li>
-                <li>Software Engineering (42 Common Core) · 2024 – 2026</li>
-                <li>ISPTEC – Computer Science · present</li>
-                <li>
-                  High School – Physical & Biological Sciences · 2020 – 2022
-                </li>
-              </ul>
-            </motion.div>
-
-            <motion.div
-              className="card-flat about-card"
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <p className="about-card-title">Profile</p>
-              <div className="profile-card" style={{ padding: 0 }}>
+              <div className="profile-improved-header">
                 <div className="profile-avatar-wrapper">
                   <img
                     src="/victor.jpg"
                     alt="Victor Kangombe"
                     className="profile-avatar"
+                    loading="lazy"
                   />
                 </div>
                 <div className="profile-info">
                   <h3>Victor Kangombe</h3>
                   <p className="profile-role">
-                    Backend Engineer · DevOps · Infrastructure
+                    Backend Engineer · DevOps · Infra
                   </p>
                   <div className="profile-tags">
                     {["Luanda, Angola", "APIs", "Infra", "Security"].map(
@@ -1255,18 +1564,105 @@ export default function Home() {
               </div>
             </motion.div>
 
+            {/* Right Column: Dynamic Screen/Tabs container */}
             <motion.div
-              className="card-flat about-card"
+              className="about-tab-container card"
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.4 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <p className="about-card-title">Languages</p>
-              <ul className="about-list">
-                <li>Portuguese · Native</li>
-                <li>English · Intermediate</li>
-              </ul>
+              <div className="about-tabs-header">
+                <button 
+                  className={`about-tab-btn ${activeAboutTab === 'bio' ? 'active' : ''}`}
+                  onClick={() => setActiveAboutTab('bio')}
+                >
+                  {t('tabBio')}
+                </button>
+                <button 
+                  className={`about-tab-btn ${activeAboutTab === 'experience' ? 'active' : ''}`}
+                  onClick={() => setActiveAboutTab('experience')}
+                >
+                  {t('tabExperience')}
+                </button>
+                <button 
+                  className={`about-tab-btn ${activeAboutTab === 'education' ? 'active' : ''}`}
+                  onClick={() => setActiveAboutTab('education')}
+                >
+                  {t('tabEducation')}
+                </button>
+                <button 
+                  className={`about-tab-btn ${activeAboutTab === 'terminal' ? 'active' : ''}`}
+                  onClick={() => setActiveAboutTab('terminal')}
+                >
+                  {t('tabConsole')}
+                </button>
+              </div>
+
+              <div className="about-tab-content">
+                {activeAboutTab === 'bio' && (
+                  <div className="tab-pane-bio">
+                    <p className="about-bio-text">{t('aboutDesc')}</p>
+                    <div className="about-languages-block">
+                      <h4 className="about-sub-heading">{t('languagesTitle')}</h4>
+                      <ul className="about-list">
+                        <li>{t('langPt')}</li>
+                        <li>{t('langEn')}</li>
+                      </ul>
+                    </div>
+                  </div>
+                )}
+
+                {activeAboutTab === 'experience' && (
+                  <div className="tab-pane-timeline">
+                    <div className="timeline-item">
+                      <span className="timeline-dot" />
+                      <div className="timeline-meta">
+                        <span className="timeline-date">{t('expDate1')}</span>
+                        <h4 className="timeline-title">{t('expTitle1')}</h4>
+                        <span className="timeline-company">{t('expCompany1')}</span>
+                      </div>
+                      <p className="timeline-desc">{t('expDesc1')}</p>
+                    </div>
+                    <div className="timeline-item">
+                      <span className="timeline-dot" />
+                      <div className="timeline-meta">
+                        <span className="timeline-date">{t('expDate2')}</span>
+                        <h4 className="timeline-title">{t('expTitle2')}</h4>
+                        <span className="timeline-company">{t('expCompany2')}</span>
+                      </div>
+                      <p className="timeline-desc">{t('expDesc2')}</p>
+                    </div>
+                  </div>
+                )}
+
+                {activeAboutTab === 'education' && (
+                  <div className="tab-pane-timeline">
+                    <div className="timeline-item">
+                      <span className="timeline-dot" />
+                      <div className="timeline-meta">
+                        <span className="timeline-date">{t('eduDate1')}</span>
+                        <h4 className="timeline-title">{t('eduTitle1')}</h4>
+                        <span className="timeline-school">{t('eduSchool1')}</span>
+                      </div>
+                      <p className="timeline-desc">{t('eduDesc1')}</p>
+                    </div>
+                    <div className="timeline-item">
+                      <span className="timeline-dot" />
+                      <div className="timeline-meta">
+                        <span className="timeline-date">{t('eduDate2')}</span>
+                        <h4 className="timeline-title">{t('eduTitle2')}</h4>
+                        <span className="timeline-school">{t('eduSchool2')}</span>
+                      </div>
+                      <p className="timeline-desc">{t('eduDesc2')}</p>
+                    </div>
+                  </div>
+                )}
+
+                {activeAboutTab === 'terminal' && (
+                  <TerminalConsole lang={lang} />
+                )}
+              </div>
             </motion.div>
           </div>
         </section>
@@ -1281,15 +1677,15 @@ export default function Home() {
             whileInView="show"
             viewport={{ once: true, margin: "-80px" }}
           >
-            <motion.p variants={fadeUp} className="section-label">
-              Tech Stack
-            </motion.p>
+            <motion.div variants={fadeUp} className="section-capsule">
+              <StarIcon />
+              {t('skillsLabel')}
+            </motion.div>
             <motion.h2 variants={fadeUp} className="section-title">
-              Technologies I work with
+              {t('skillsTitle')}
             </motion.h2>
             <motion.p variants={fadeUp} className="section-desc">
-              Tools and languages I use daily for backend development, DevOps
-              and infrastructure.
+              {t('skillsDesc')}
             </motion.p>
           </motion.div>
 
@@ -1330,15 +1726,15 @@ export default function Home() {
             whileInView="show"
             viewport={{ once: true, margin: "-80px" }}
           >
-            <motion.p variants={fadeUp} className="section-label">
-              Projects
-            </motion.p>
+            <motion.div variants={fadeUp} className="section-capsule">
+              <StarIcon />
+              {t('projectsLabel')}
+            </motion.div>
             <motion.h2 variants={fadeUp} className="section-title">
-              Selected work
+              {t('projectsTitle')}
             </motion.h2>
             <motion.p variants={fadeUp} className="section-desc">
-              Projects with clear architecture, well-defined responsibility and
-              real technical depth.
+              {t('projectsDesc')}
             </motion.p>
           </motion.div>
 
@@ -1357,7 +1753,7 @@ export default function Home() {
                 <ProjectCarousel images={project.images} />
                 <div className="project-body">
                   <h3 className="project-name">{project.name}</h3>
-                  <p className="project-desc">{project.description}</p>
+                  <p className="project-desc">{getText(project.description, lang)}</p>
                   <div className="project-stack">
                     {project.stack.map((tech) => (
                       <span key={tech} className="tag">
@@ -1409,14 +1805,15 @@ export default function Home() {
             whileInView="show"
             viewport={{ once: true, margin: "-80px" }}
           >
-            <motion.p variants={fadeUp} className="section-label">
-              Competitions
-            </motion.p>
+            <motion.div variants={fadeUp} className="section-capsule">
+              <StarIcon />
+              {t('hackathonsLabel')}
+            </motion.div>
             <motion.h2 variants={fadeUp} className="section-title">
-              Hackathons & Awards
+              {t('hackathonsTitle')}
             </motion.h2>
             <motion.p variants={fadeUp} className="section-desc">
-              Results from national and international competitions.
+              {t('hackathonsDesc')}
             </motion.p>
           </motion.div>
 
@@ -1467,6 +1864,7 @@ export default function Home() {
           <HackathonModal
             hackathon={selectedHackathon}
             onClose={() => setSelectedHackathon(null)}
+            lang={lang}
           />
         )}
 
@@ -1476,6 +1874,7 @@ export default function Home() {
             <ProjectDrawer
               project={selectedProject}
               onClose={() => setSelectedProject(null)}
+              lang={lang}
             />
           )}
         </AnimatePresence>
@@ -1492,14 +1891,16 @@ export default function Home() {
           >
             <div className="card-flat contact-card">
               <div>
-                <p className="section-label">Contact</p>
-                <h2 className="section-title">Let&#39;s work together</h2>
+                <div className="section-capsule">
+                  <StarIcon />
+                  {t('contactLabel')}
+                </div>
+                <h2 className="section-title">{t('contactTitle')}</h2>
                 <p
                   className="section-desc"
                   style={{ marginTop: "0.5rem", maxWidth: 420 }}
                 >
-                  Have a project in mind, want to discuss architecture or just
-                  connect? Reach out and I&#39;ll respond promptly.
+                  {t('contactDesc')}
                 </p>
               </div>
               <div className="contact-links">
@@ -1533,7 +1934,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="site-footer">
-        © {new Date().getFullYear()} Victor Kangombe. Built with Next.js
+        © {new Date().getFullYear()} {t('footerText')}
       </footer>
     </div>
   );
