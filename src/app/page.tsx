@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import { useEffect, useState, useCallback, useRef } from "react";
 import {
   siC,
@@ -30,6 +30,12 @@ const MATRIX_CHARS = "01アイウエオカキクケコサシスセソ";
 const MATRIX_COLUMNS = 24;
 
 /* ─── Types ─── */
+type ProjectDetails = {
+  role?: string;
+  challenges?: string;
+  outcome?: string;
+};
+
 type Project = {
   name: string;
   description: string;
@@ -37,6 +43,7 @@ type Project = {
   images: string[];
   github?: string;
   live?: string;
+  details?: ProjectDetails;
 };
 
 type HackathonMember = {
@@ -101,6 +108,11 @@ const PROJECTS: Project[] = [
       "/projects/black-hole-academy/470DF929-B7F6-4404-9B9E-0DF349C78ABB.JPG",
       "/projects/black-hole-academy/FA6EA684-AF93-4B43-A4CB-EFA667358C76.JPG",
     ],
+    details: {
+      role: "Backend Engineer",
+      challenges: "Designing a secure JWT authentication system and configuring the NGINX reverse proxy to handle high concurrency while keeping container overhead minimal.",
+      outcome: "Successfully containerized the application, resulting in predictable deployments and a robust, secure API layer with JWT-based route protection."
+    }
   },
   {
     name: "Cesta Digital",
@@ -108,6 +120,11 @@ const PROJECTS: Project[] = [
       "Donation platform backend with authentication, real-time campaign tracking, Redis caching, and monitoring.",
     stack: ["NestJS", "Prisma", "Redis", "JWT"],
     images: ["/projects/cesta-digital/cover.png"],
+    details: {
+      role: "Backend Developer",
+      challenges: "Implementing a low-latency caching layer with Redis to ensure real-time campaign statistics are updated instantly without overloading the database.",
+      outcome: "Achieved sub-10ms response times for active campaign endpoints and ensured full data consistency using Prisma ORM."
+    }
   },
   {
     name: "Accessible Tourism Map",
@@ -116,6 +133,11 @@ const PROJECTS: Project[] = [
     stack: ["Python", "Flask", "Folium", "Leaflet"],
     images: ["/projects/tourism-map/cover.png"],
     github: "https://github.com/leonel-the13/MTA",
+    details: {
+      role: "Fullstack Developer",
+      challenges: "Parsing and rendering complex geographical JSON datasets on a mobile-friendly map interface using Leaflet and Folium.",
+      outcome: "Created a fully functional accessibility map for tourists, integrated with Flask and offering highly responsive filtering options."
+    }
   },
   {
     name: "Inception",
@@ -124,6 +146,11 @@ const PROJECTS: Project[] = [
     stack: ["Docker", "NGINX", "MariaDB", "Docker Compose"],
     images: ["/projects/inception/cover.png"],
     github: "https://github.com/leonel-the13/inseption",
+    details: {
+      role: "System Administrator / DevOps",
+      challenges: "Establishing secure multi-container networking where only the NGINX container is exposed to the host while WordPress and MariaDB communicate in a private network.",
+      outcome: "Implemented a fully isolated, automated container configuration script with custom Docker networking rules and persistent volumes."
+    }
   },
   {
     name: "Webserver",
@@ -131,6 +158,11 @@ const PROJECTS: Project[] = [
       "HTTP engine built from scratch with manual parsing, raw sockets, and typed responses. Compliant with HTTP/1.1.",
     stack: ["C++ 98", "Sockets", "HTTP/1.1"],
     images: ["/projects/webserver/cover.png"],
+    details: {
+      role: "C++ Software Engineer",
+      challenges: "Handling multiple concurrent TCP client connections asynchronously without blocking the main program thread, using socket selectors (select/poll).",
+      outcome: "Built a fully functional HTTP/1.1 web server from scratch capable of handling file uploads, static file serving, and basic CGI scripts."
+    }
   },
   {
     name: "Born2beroot",
@@ -138,6 +170,11 @@ const PROJECTS: Project[] = [
       "Linux hardening project: user permissions, SSH configuration, firewall rules, and security policies.",
     stack: ["Linux", "Security", "SSH", "UFW"],
     images: ["/projects/born2beroot/cover.png"],
+    details: {
+      role: "System Security Analyst",
+      challenges: "Configuring strict sudoer policies, setting up a secure UFW firewall, and configuring dynamic SSH access policies while preserving system stability.",
+      outcome: "Successfully audited and hardened a Debian virtual machine, achieving full compliance with strict security requirements."
+    }
   },
 ];
 
@@ -182,6 +219,35 @@ const HACKATHONS: Hackathon[] = [
       {
         name: "Sebastião Sukuakueche  ",
         linkedin: "https://www.linkedin.com/in/sebastiao-sukuakueche",
+      },
+    ],
+  },
+  {
+    title: "ANGOTIC 2026",
+    position: "2nd Place",
+    positionClass: "silver",
+    year: "2026",
+    scope: "National",
+    image: "/hackathons/angotic2026/cover.jpeg",
+    gallery: [
+      "/hackathons/angotic2026/cover.jpeg",
+      "/hackathons/angotic2026/IMG_8664.jpeg",
+      "/hackathons/angotic2026/IMG_9610.JPG",
+      "/hackathons/angotic2026/IMG_9614.JPG",
+      "/hackathons/angotic2026/IMG_9615.jpeg",
+    ],
+    description:
+      "National hackathon held at the ANGOTIC 2026 conference. Developed a full solution with focus on technology and infrastructure.",
+    team: "team",
+    members: [
+      { name: "Victor Kangombe" },
+      {
+        name: "Joisson Miguel",
+        linkedin: "https://www.linkedin.com/in/joisson-miguel",
+      },
+      {
+        name: "Jorge Carvalho",
+        linkedin: "https://www.linkedin.com/in/jorge-de-carvalho-366899333",
       },
     ],
   },
@@ -344,19 +410,35 @@ function ProjectCarousel({ images }: { images: string[] }) {
 
   return (
     <div className="project-carousel">
-      <img
-        src={images[current]}
-        alt="Project screenshot"
-        onError={() => setHasError((prev) => ({ ...prev, [current]: true }))}
-      />
+      <AnimatePresence mode="popLayout">
+        <motion.img
+          key={current}
+          src={images[current]}
+          alt="Project screenshot"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.6, ease: "easeInOut" }}
+          onError={() => setHasError((prev) => ({ ...prev, [current]: true }))}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+          }}
+        />
+      </AnimatePresence>
       {images.length > 1 && (
-        <>
+        <div style={{ position: "relative", zIndex: 10, width: "100%", height: "100%", pointerEvents: "none" }}>
           <button
             className="project-carousel-nav prev"
             onClick={(e) => {
               e.stopPropagation();
               setCurrent((c) => (c - 1 + images.length) % images.length);
             }}
+            style={{ pointerEvents: "auto" }}
             aria-label="Previous image"
           >
             ‹
@@ -367,11 +449,12 @@ function ProjectCarousel({ images }: { images: string[] }) {
               e.stopPropagation();
               setCurrent((c) => (c + 1) % images.length);
             }}
+            style={{ pointerEvents: "auto" }}
             aria-label="Next image"
           >
             ›
           </button>
-          <div className="project-carousel-dots">
+          <div className="project-carousel-dots" style={{ pointerEvents: "auto" }}>
             {images.map((_, i) => (
               <button
                 key={i}
@@ -384,8 +467,53 @@ function ProjectCarousel({ images }: { images: string[] }) {
               />
             ))}
           </div>
-        </>
+        </div>
       )}
+    </div>
+  );
+}
+
+function HackathonImageCarousel({
+  images,
+  alt,
+  defaultImage,
+}: {
+  images: string[];
+  alt: string;
+  defaultImage: string;
+}) {
+  const [current, setCurrent] = useState(0);
+  const galleryImages = images && images.length > 0 ? images : [defaultImage];
+
+  useEffect(() => {
+    if (galleryImages.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrent((c) => (c + 1) % galleryImages.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [galleryImages.length]);
+
+  return (
+    <div className="hackathon-image-container">
+      <AnimatePresence mode="popLayout">
+        <motion.img
+          key={current}
+          src={galleryImages[current]}
+          alt={alt}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.6, ease: "easeInOut" }}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+          }}
+        />
+      </AnimatePresence>
     </div>
   );
 }
@@ -397,6 +525,8 @@ function HackathonModal({
   hackathon: Hackathon;
   onClose: () => void;
 }) {
+  const [currentImg, setCurrentImg] = useState(0);
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -433,10 +563,60 @@ function HackathonModal({
         </div>
         <div className="modal-body">
           {hackathon.gallery.length > 0 && (
-            <div className="modal-gallery">
-              {hackathon.gallery.map((img, i) => (
-                <img key={i} src={img} alt={`${hackathon.title} ${i + 1}`} />
-              ))}
+            <div className="modal-gallery-carousel">
+              <div className="modal-gallery-viewer">
+                <AnimatePresence mode="popLayout">
+                  <motion.img
+                    key={currentImg}
+                    src={hackathon.gallery[currentImg]}
+                    alt={`${hackathon.title} image ${currentImg + 1}`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className="modal-gallery-img"
+                  />
+                </AnimatePresence>
+
+                {hackathon.gallery.length > 1 && (
+                  <>
+                    <button
+                      className="modal-carousel-nav prev"
+                      onClick={() =>
+                        setCurrentImg(
+                          (c) => (c - 1 + hackathon.gallery.length) % hackathon.gallery.length
+                        )
+                      }
+                      aria-label="Previous image"
+                    >
+                      ‹
+                    </button>
+                    <button
+                      className="modal-carousel-nav next"
+                      onClick={() =>
+                        setCurrentImg(
+                          (c) => (c + 1) % hackathon.gallery.length
+                        )
+                      }
+                      aria-label="Next image"
+                    >
+                      ›
+                    </button>
+                    <div className="modal-carousel-dots">
+                      {hackathon.gallery.map((_, idx) => (
+                        <button
+                          key={idx}
+                          className={`modal-carousel-dot ${
+                            idx === currentImg ? "active" : ""
+                          }`}
+                          onClick={() => setCurrentImg(idx)}
+                          aria-label={`Go to image ${idx + 1}`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           )}
           <p
@@ -490,6 +670,187 @@ function HackathonModal({
             )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function ProjectDrawer({
+  project,
+  onClose,
+}: {
+  project: Project;
+  onClose: () => void;
+}) {
+  const [currentImg, setCurrentImg] = useState(0);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handler);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handler);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+
+  return (
+    <div className="drawer-overlay" onClick={onClose}>
+      <motion.div
+        className="drawer-content"
+        onClick={(e) => e.stopPropagation()}
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "100%" }}
+        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+      >
+        <div className="drawer-header">
+          <div>
+            <span className="drawer-subtitle">Project Detail</span>
+            <h3 className="drawer-title">{project.name}</h3>
+          </div>
+          <button className="drawer-close" onClick={onClose} aria-label="Close">
+            ×
+          </button>
+        </div>
+
+        <div className="drawer-body">
+          {/* Large Image Carousel/Gallery */}
+          {project.images.length > 0 && (
+            <div className="drawer-gallery-container">
+              <div className="drawer-gallery-viewer">
+                <AnimatePresence mode="popLayout">
+                  <motion.img
+                    key={currentImg}
+                    src={project.images[currentImg]}
+                    alt={`${project.name} preview ${currentImg + 1}`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className="drawer-gallery-img"
+                  />
+                </AnimatePresence>
+
+                {project.images.length > 1 && (
+                  <>
+                    <button
+                      className="drawer-carousel-nav prev"
+                      onClick={() =>
+                        setCurrentImg(
+                          (c) => (c - 1 + project.images.length) % project.images.length
+                        )
+                      }
+                      aria-label="Previous image"
+                    >
+                      ‹
+                    </button>
+                    <button
+                      className="drawer-carousel-nav next"
+                      onClick={() =>
+                        setCurrentImg(
+                          (c) => (c + 1) % project.images.length
+                        )
+                      }
+                      aria-label="Next image"
+                    >
+                      ›
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {project.images.length > 1 && (
+                <div className="drawer-gallery-thumbnails">
+                  {project.images.map((img, idx) => (
+                    <button
+                      key={idx}
+                      className={`drawer-thumbnail-btn ${
+                        idx === currentImg ? "active" : ""
+                      }`}
+                      onClick={() => setCurrentImg(idx)}
+                    >
+                      <img src={img} alt="" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Details Metadata */}
+          <div className="drawer-meta-section">
+            {project.details?.role && (
+              <div className="drawer-meta-row">
+                <span className="drawer-meta-label">My Role:</span>
+                <span className="drawer-meta-value">{project.details.role}</span>
+              </div>
+            )}
+
+            <div className="drawer-meta-row">
+              <span className="drawer-meta-label">Tech Stack:</span>
+              <div className="drawer-tags">
+                {project.stack.map((tech) => (
+                  <span key={tech} className="tag">
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {(project.github || project.live) && (
+              <div className="drawer-links">
+                {project.github && (
+                  <a
+                    href={project.github}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn-primary"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <GithubIcon />
+                    GitHub Repo
+                  </a>
+                )}
+                {project.live && (
+                  <a
+                    href={project.live}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn-ghost"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <ExternalIcon />
+                    Live Demo
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="drawer-details-content">
+            <div className="drawer-details-block">
+              <h4>Overview</h4>
+              <p>{project.description}</p>
+            </div>
+
+            {project.details?.challenges && (
+              <div className="drawer-details-block">
+                <h4>Technical Challenges</h4>
+                <p>{project.details.challenges}</p>
+              </div>
+            )}
+
+            {project.details?.outcome && (
+              <div className="drawer-details-block">
+                <h4>Key Outcome</h4>
+                <p>{project.details.outcome}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 }
@@ -595,6 +956,14 @@ export default function Home() {
   const [selectedHackathon, setSelectedHackathon] = useState<Hackathon | null>(
     null,
   );
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
 
   useEffect(() => {
     setMatrixColumns(createMatrixColumns());
@@ -612,6 +981,7 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen">
+      <motion.div className="scroll-progress-bar" style={{ scaleX }} />
       {/* Background */}
       <div className="bg-gradient-base" />
 
@@ -696,38 +1066,101 @@ export default function Home() {
         {/* ─── Hero ─── */}
         <section className="hero">
           <motion.div
-            className="hero-content"
+            className="hero-container"
             variants={staggerContainer}
             initial="hidden"
             animate="show"
           >
-            <motion.div variants={fadeUp} className="hero-badge">
-              <span className="hero-badge-dot" />
-              Available for work
-            </motion.div>
+            {/* Left Column */}
+            <div className="hero-left">
+              <motion.div variants={fadeUp} className="hero-badge">
+                <span className="hero-badge-dot" />
+                Available for work
+              </motion.div>
 
-            <motion.h1 variants={fadeUp} className="hero-name">
-              Victor Kangombe
-            </motion.h1>
+              <motion.h1 variants={fadeUp} className="hero-name">
+                Victor Kangombe
+              </motion.h1>
 
-            <motion.p variants={fadeUp} className="hero-role">
-              Backend Engineer <span>|</span> Java <span>|</span> Node.js{" "}
-              <span>|</span> DevOps
-            </motion.p>
+              <motion.p variants={fadeUp} className="hero-role">
+                Backend Engineer <span>|</span> Java <span>|</span> Node.js{" "}
+                <span>|</span> DevOps
+              </motion.p>
 
-            <motion.p variants={fadeUp} className="hero-desc">
-              Building scalable APIs, real-time systems and containerized
-              infrastructure.
-            </motion.p>
+              <motion.p variants={fadeUp} className="hero-desc">
+                Building scalable APIs, real-time systems and containerized
+                infrastructure.
+              </motion.p>
 
-            <motion.div variants={fadeUp} className="hero-actions">
-              <a href="#projects" className="btn-primary">
-                View Projects
-              </a>
-              <a href="#contact" className="btn-ghost">
-                Get in Touch
-              </a>
-            </motion.div>
+              <motion.div variants={fadeUp} className="hero-actions">
+                <a href="#projects" className="btn-primary">
+                  View Projects
+                </a>
+                <a href="#contact" className="btn-ghost">
+                  Get in Touch
+                </a>
+              </motion.div>
+
+              {/* Stats Row */}
+              <motion.div variants={fadeUp} className="hero-stats">
+                <div className="hero-stat-item">
+                  <span className="hero-stat-number">4</span>
+                  <span className="hero-stat-label">Hackathons</span>
+                </div>
+                <div className="hero-stat-item">
+                  <span className="hero-stat-number">6</span>
+                  <span className="hero-stat-label">Projects</span>
+                </div>
+                <div className="hero-stat-item">
+                  <span className="hero-stat-number">2+</span>
+                  <span className="hero-stat-label">Years Exp</span>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Right Column */}
+            <div className="hero-right">
+              <div className="hero-image-wrapper">
+                <img
+                  src="/victor.jpg"
+                  alt="Victor Kangombe"
+                  className="hero-profile-img"
+                />
+                <div className="hero-image-glow" />
+
+                {/* Floating Tags */}
+                <motion.span
+                  className="floating-tag tag-java"
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="#fbbf24" style={{ display: "inline-block" }}>
+                    <path d={siOpenjdk.path} />
+                  </svg>
+                  Java
+                </motion.span>
+                <motion.span
+                  className="floating-tag tag-docker"
+                  animate={{ y: [0, 8, 0] }}
+                  transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="#38bdf8" style={{ display: "inline-block" }}>
+                    <path d={siDocker.path} />
+                  </svg>
+                  Docker
+                </motion.span>
+                <motion.span
+                  className="floating-tag tag-nestjs"
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="#f472b6" style={{ display: "inline-block" }}>
+                    <path d={siNestjs.path} />
+                  </svg>
+                  NestJS
+                </motion.span>
+              </div>
+            </div>
           </motion.div>
         </section>
 
@@ -797,11 +1230,13 @@ export default function Home() {
             >
               <p className="about-card-title">Profile</p>
               <div className="profile-card" style={{ padding: 0 }}>
-                <img
-                  src="/victor.jpg"
-                  alt="Victor Kangombe"
-                  className="profile-avatar"
-                />
+                <div className="profile-avatar-wrapper">
+                  <img
+                    src="/victor.jpg"
+                    alt="Victor Kangombe"
+                    className="profile-avatar"
+                  />
+                </div>
                 <div className="profile-info">
                   <h3>Victor Kangombe</h3>
                   <p className="profile-role">
@@ -870,6 +1305,7 @@ export default function Home() {
                 key={tech.label}
                 variants={fadeUp}
                 className="skill-item"
+                style={{ "--icon-color": `#${tech.icon.hex}` } as React.CSSProperties}
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -915,6 +1351,8 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: idx * 0.06 }}
+                onClick={() => setSelectedProject(project)}
+                style={{ cursor: "pointer" }}
               >
                 <ProjectCarousel images={project.images} />
                 <div className="project-body">
@@ -935,6 +1373,7 @@ export default function Home() {
                           className="project-link"
                           target="_blank"
                           rel="noreferrer"
+                          onClick={(e) => e.stopPropagation()}
                         >
                           <GithubIcon />
                           GitHub
@@ -946,6 +1385,7 @@ export default function Home() {
                           className="project-link"
                           target="_blank"
                           rel="noreferrer"
+                          onClick={(e) => e.stopPropagation()}
                         >
                           <ExternalIcon />
                           Live
@@ -991,11 +1431,11 @@ export default function Home() {
                 transition={{ duration: 0.4, delay: idx * 0.08 }}
                 onClick={() => setSelectedHackathon(hack)}
               >
-                {hack.image ? (
-                  <img
-                    src={hack.image}
+                {hack.image || (hack.gallery && hack.gallery.length > 0) ? (
+                  <HackathonImageCarousel
+                    images={hack.gallery}
                     alt={hack.title}
-                    className="hackathon-image"
+                    defaultImage={hack.image}
                   />
                 ) : (
                   <div className="hackathon-image-placeholder">
@@ -1029,6 +1469,16 @@ export default function Home() {
             onClose={() => setSelectedHackathon(null)}
           />
         )}
+
+        {/* Project Drawer */}
+        <AnimatePresence>
+          {selectedProject && (
+            <ProjectDrawer
+              project={selectedProject}
+              onClose={() => setSelectedProject(null)}
+            />
+          )}
+        </AnimatePresence>
 
         <hr className="divider" style={{ maxWidth: 1120, margin: "0 auto" }} />
 
