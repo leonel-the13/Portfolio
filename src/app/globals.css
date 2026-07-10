@@ -550,7 +550,7 @@ button svg,
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  border-radius: var(--radius-sm);
+  border-radius: 9999px;
   background: var(--accent);
   color: var(--bg-deep);
   font-size: 0.8125rem;
@@ -572,7 +572,7 @@ button svg,
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  border-radius: var(--radius-sm);
+  border-radius: 9999px;
   background: transparent;
   color: var(--text-secondary);
   font-size: 0.8125rem;
@@ -594,7 +594,7 @@ button svg,
   justify-content: center;
   width: 36px;
   height: 36px;
-  border-radius: var(--radius-sm);
+  border-radius: 9999px;
   background: var(--accent-dim);
   border: 1px solid rgba(56, 189, 248, 0.1);
   color: var(--accent);
@@ -884,7 +884,7 @@ button svg,
   font-weight: 500;
   color: var(--accent);
   padding: 0.375rem 0.75rem;
-  border-radius: var(--radius-sm);
+  border-radius: 9999px;
   background: var(--accent-dim);
   transition: all 0.2s;
 }
@@ -1598,8 +1598,12 @@ button svg,
 }
 
 [data-theme='light'] .matrix-rain {
-  opacity: 0.035;
-  filter: blur(0.8px) grayscale(100%);
+  opacity: 0.1;
+  filter: blur(0.5px);
+}
+
+[data-theme='light'] .matrix-stream {
+  color: #15803d;
 }
 
 [data-theme='light'] .site-header {

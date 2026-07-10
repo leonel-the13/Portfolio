@@ -82,7 +82,7 @@ const TRANSLATIONS = {
     getInTouch: "Entrar em contacto",
     heroStatsHackathons: "Hackathons",
     heroStatsProjects: "Projetos",
-    heroStatsExp: "Anos Exp",
+    heroStatsTechs: "Tecnologias",
     aboutTitle: "Sobre mim",
     aboutSubtitle: "Minha Jornada",
     aboutDesc: "Desenvolvedor focado em construir soluções robustas, escaláveis e eficientes, com forte conhecimento em backend e infraestrutura.",
@@ -113,25 +113,24 @@ const TRANSLATIONS = {
     modalSolo: "Solo",
     modalTeam: "Equipa",
     tabBio: "Bio",
-    tabExperience: "Experiência",
     tabEducation: "Educação",
     tabConsole: "Console CLI",
-    expTitle1: "Engenheiro de Backend Freelancer",
-    expCompany1: "Autónomo",
-    expDate1: "2024 - Presente",
-    expDesc1: "Desenvolvimento de APIs RESTful usando Spring Boot e NestJS, otimização de bancos de dados PostgreSQL e orquestração de containers com Docker.",
-    expTitle2: "Desenvolvedor Backend (Estágio)",
-    expCompany2: "Tech Solutions",
-    expDate2: "2023 - 2024",
-    expDesc2: "Auxílio no desenvolvimento de microsserviços, automação de testes de integração e configuração de servidores proxy NGINX.",
-    eduTitle1: "Engenharia Informática",
-    eduSchool1: "Instituto Superior de Tecnologias",
-    eduDate1: "2021 - 2025",
-    eduDesc1: "Foco em algoritmos, arquitetura de computadores, compiladores e redes de computadores.",
-    eduTitle2: "Certificação de Hardening de Sistemas",
+    eduTitle1: "Especialização em DevOps e Cibersegurança",
+    eduSchool1: "42 Advanced, 42 Luanda",
+    eduDate1: "2026 - Presente",
+    eduDesc1: "Especialização avançada focada em infraestrutura como código (IaC), CI/CD avançado, segurança defensiva e automação de processos de deployment.",
+    eduTitle2: "Common Core (Ciência da Computação)",
     eduSchool2: "42 Luanda",
-    eduDate2: "2023",
-    eduDesc2: "Hardening de Linux Debian, gestão de acessos SSH, UFW, regras sudo e integridade de sistemas corporativos.",
+    eduDate2: "2024 - 2026",
+    eduDesc2: "Estudo aprofundado e prático de programação de baixo nível em C/C++, concorrência de processos, redes de computadores, docker, virtualização e sistemas baseados em Unix.",
+    eduTitle3: "Licenciatura em Engenharia Informática",
+    eduSchool3: "Instituto Superior Politécnico de Tecnologias e Ciências (ISPTEC)",
+    eduDate3: "2022 - Presente",
+    eduDesc3: "Formação académica centrada em estruturas de dados, modelação de software, bases de dados relacionais e segurança de informação.",
+    eduTitle4: "Ensino Médio - Ciências Físicas e Biológicas",
+    eduSchool4: "Complexo Escolar Privado Pim Pam Pum (Lobito)",
+    eduDate4: "2020 - 2022",
+    eduDesc4: "Curso secundário com foco em matemática avançada, física teórica/prática e biologia celular.",
     langPt: "Português · Nativo",
     langEn: "Inglês · Intermédio",
     consoleWelcome: "Consola de Programador do Victor v1.0.0. Digite 'help' para comandos.",
@@ -146,7 +145,7 @@ const TRANSLATIONS = {
     getInTouch: "Get in Touch",
     heroStatsHackathons: "Hackathons",
     heroStatsProjects: "Projects",
-    heroStatsExp: "Years Exp",
+    heroStatsTechs: "Technologies",
     aboutTitle: "About me",
     aboutSubtitle: "My Journey",
     aboutDesc: "Developer focused on building robust, scalable, and efficient solutions, with strong knowledge in backend and infrastructure.",
@@ -177,25 +176,24 @@ const TRANSLATIONS = {
     modalSolo: "Solo",
     modalTeam: "Team",
     tabBio: "Bio",
-    tabExperience: "Experience",
     tabEducation: "Education",
     tabConsole: "CLI Console",
-    expTitle1: "Freelance Backend Engineer",
-    expCompany1: "Self-employed",
-    expDate1: "2024 - Present",
-    expDesc1: "Developing RESTful APIs using Spring Boot and NestJS, optimizing PostgreSQL databases, and orchestrating containers with Docker Compose.",
-    expTitle2: "Backend Developer (Intern)",
-    expCompany2: "Tech Solutions",
-    expDate2: "2023 - 2024",
-    expDesc2: "Assisted in building microservices, automating integration tests, and configuring NGINX reverse proxies.",
-    eduTitle1: "B.S. in Computer Engineering",
-    eduSchool1: "High Institute of Technologies",
-    eduDate1: "2021 - 2025",
-    eduDesc1: "Focused on algorithms, computer architecture, compilers, and computer networking.",
-    eduTitle2: "System Hardening Certification",
+    eduTitle1: "DevOps & Cybersec Specialization",
+    eduSchool1: "42 Advanced, 42 Luanda",
+    eduDate1: "2026 - Present",
+    eduDesc1: "Advanced track focusing on Infrastructure as Code (IaC), custom CI/CD pipelines, defensive server protection, and orchestration security.",
+    eduTitle2: "Common Core (Computer Science)",
     eduSchool2: "42 Luanda",
-    eduDate2: "2023",
-    eduDesc2: "Hardening Debian Linux, managing SSH accesses, configuring UFW rules, and ensuring system integrity.",
+    eduDate2: "2024 - 2026",
+    eduDesc2: "Practical engineering curricula based on low-level development in C/C++, process concurrency, network programming, virtualization, and Unix architectures.",
+    eduTitle3: "B.S. in Computer Engineering",
+    eduSchool3: "Instituto Superior Politécnico de Tecnologias e Ciências (ISPTEC)",
+    eduDate3: "2022 - Present",
+    eduDesc3: "Higher education centering on advanced software modelling, DBMS systems, networking fundamentals, and programming paradigms.",
+    eduTitle4: "High School - Physical & Biological Sciences",
+    eduSchool4: "Complexo Escolar Privado Pim Pam Pum (Lobito)",
+    eduDate4: "2020 - 2022",
+    eduDesc4: "Secondary school credentials focusing on core mathematics, physics, and biological sciences.",
     langPt: "Portuguese · Native",
     langEn: "English · Intermediate",
     consoleWelcome: "Victor's Developer Console v1.0.0. Type 'help' for commands.",
@@ -552,7 +550,7 @@ const StarIcon = () => (
 function TerminalConsole({ lang }: { lang: 'pt' | 'en' }) {
   const [history, setHistory] = useState<string[]>([]);
   const [input, setInput] = useState('');
-  const terminalEndRef = useRef<HTMLDivElement>(null);
+  const terminalBodyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setHistory([
@@ -593,8 +591,8 @@ function TerminalConsole({ lang }: { lang: 'pt' | 'en' }) {
   };
 
   useEffect(() => {
-    if (terminalEndRef.current) {
-      terminalEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (terminalBodyRef.current) {
+      terminalBodyRef.current.scrollTop = terminalBodyRef.current.scrollHeight;
     }
   }, [history]);
 
@@ -608,7 +606,7 @@ function TerminalConsole({ lang }: { lang: 'pt' | 'en' }) {
         </div>
         <span className="terminal-title">bash - victor@portfolio</span>
       </div>
-      <div className="terminal-body">
+      <div className="terminal-body" ref={terminalBodyRef}>
         {history.map((line, idx) => (
           <pre key={idx} className="terminal-line">{line}</pre>
         ))}
@@ -622,7 +620,6 @@ function TerminalConsole({ lang }: { lang: 'pt' | 'en' }) {
             placeholder="..."
           />
         </form>
-        <div ref={terminalEndRef} />
       </div>
     </div>
   );
@@ -1222,7 +1219,7 @@ export default function Home() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [lang, setLang] = useState<'pt' | 'en'>('pt');
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-  const [activeAboutTab, setActiveAboutTab] = useState<'bio' | 'experience' | 'education' | 'terminal'>('bio');
+  const [activeAboutTab, setActiveAboutTab] = useState<'bio' | 'education' | 'terminal'>('bio');
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -1458,8 +1455,8 @@ export default function Home() {
                   <span className="hero-stat-label">{t('heroStatsProjects')}</span>
                 </div>
                 <div className="hero-stat-item">
-                  <span className="hero-stat-number">2+</span>
-                  <span className="hero-stat-label">{t('heroStatsExp')}</span>
+                  <span className="hero-stat-number">16</span>
+                  <span className="hero-stat-label">{t('heroStatsTechs')}</span>
                 </div>
               </motion.div>
             </div>
@@ -1576,24 +1573,21 @@ export default function Home() {
                 <button 
                   className={`about-tab-btn ${activeAboutTab === 'bio' ? 'active' : ''}`}
                   onClick={() => setActiveAboutTab('bio')}
+                  type="button"
                 >
                   {t('tabBio')}
                 </button>
                 <button 
-                  className={`about-tab-btn ${activeAboutTab === 'experience' ? 'active' : ''}`}
-                  onClick={() => setActiveAboutTab('experience')}
-                >
-                  {t('tabExperience')}
-                </button>
-                <button 
                   className={`about-tab-btn ${activeAboutTab === 'education' ? 'active' : ''}`}
                   onClick={() => setActiveAboutTab('education')}
+                  type="button"
                 >
                   {t('tabEducation')}
                 </button>
                 <button 
                   className={`about-tab-btn ${activeAboutTab === 'terminal' ? 'active' : ''}`}
                   onClick={() => setActiveAboutTab('terminal')}
+                  type="button"
                 >
                   {t('tabConsole')}
                 </button>
@@ -1609,29 +1603,6 @@ export default function Home() {
                         <li>{t('langPt')}</li>
                         <li>{t('langEn')}</li>
                       </ul>
-                    </div>
-                  </div>
-                )}
-
-                {activeAboutTab === 'experience' && (
-                  <div className="tab-pane-timeline">
-                    <div className="timeline-item">
-                      <span className="timeline-dot" />
-                      <div className="timeline-meta">
-                        <span className="timeline-date">{t('expDate1')}</span>
-                        <h4 className="timeline-title">{t('expTitle1')}</h4>
-                        <span className="timeline-company">{t('expCompany1')}</span>
-                      </div>
-                      <p className="timeline-desc">{t('expDesc1')}</p>
-                    </div>
-                    <div className="timeline-item">
-                      <span className="timeline-dot" />
-                      <div className="timeline-meta">
-                        <span className="timeline-date">{t('expDate2')}</span>
-                        <h4 className="timeline-title">{t('expTitle2')}</h4>
-                        <span className="timeline-company">{t('expCompany2')}</span>
-                      </div>
-                      <p className="timeline-desc">{t('expDesc2')}</p>
                     </div>
                   </div>
                 )}
@@ -1655,6 +1626,24 @@ export default function Home() {
                         <span className="timeline-school">{t('eduSchool2')}</span>
                       </div>
                       <p className="timeline-desc">{t('eduDesc2')}</p>
+                    </div>
+                    <div className="timeline-item">
+                      <span className="timeline-dot" />
+                      <div className="timeline-meta">
+                        <span className="timeline-date">{t('eduDate3')}</span>
+                        <h4 className="timeline-title">{t('eduTitle3')}</h4>
+                        <span className="timeline-school">{t('eduSchool3')}</span>
+                      </div>
+                      <p className="timeline-desc">{t('eduDesc3')}</p>
+                    </div>
+                    <div className="timeline-item">
+                      <span className="timeline-dot" />
+                      <div className="timeline-meta">
+                        <span className="timeline-date">{t('eduDate4')}</span>
+                        <h4 className="timeline-title">{t('eduTitle4')}</h4>
+                        <span className="timeline-school">{t('eduSchool4')}</span>
+                      </div>
+                      <p className="timeline-desc">{t('eduDesc4')}</p>
                     </div>
                   </div>
                 )}
