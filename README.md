@@ -1,60 +1,52 @@
-# Cyber DevOps Command Center — Portfolio
+# victor-kangombe.me
 
-Portfolio pessoal com identidade de engenharia, DevOps e ciberseguranca. A interface segue o conceito de "Centro de Comando" com foco em clareza, confiabilidade e performance.
+Portfólio de Victor Kangombe — Engenheiro de Software | Infraestrutura e Segurança da Informação.
 
-## Visao Geral
-
-- Tema: Cyber DevOps Command Center
-- Objetivo: apresentar projetos, stack e experiencia de forma profissional
-- Publico: recrutadores e equipes tecnicas
-
-## Destaques
-
-- Layout responsivo e foco em leitura rapida
-- Efeitos visuais leves e consistentes com o tema
-- Secoes organizadas: Visao Geral, Tecnologias, Infraestrutura, Projetos, Hackathons, Contato
-- Conteudo em portugues
+Site multi-página e bilingue (PT/EN), gerado como HTML estático.
 
 ## Stack
 
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
+- Next.js (App Router, `output: "export"`) + TypeScript
+- Tailwind CSS v4
 - Framer Motion
+- lucide-react
 
-## Estrutura do Projeto
-
-```
-public/
-src/
-  app/
-    globals.css
-    layout.tsx
-    page.tsx
-```
-
-## Como Rodar
-
-### Desenvolvimento
+## Comandos
 
 ```bash
 npm install
-npm run dev
+npm run dev     # http://localhost:3000/pt/
+npm run build   # gera o site estático em out/
+npm run lint
 ```
 
-### Build
+## Actualizar conteúdo
 
-```bash
-npm run build
-npm run start
-```
+Todo o texto está em [`src/content/`](src/content). Não é preciso mexer nos componentes:
 
-## Ajustes de Conteudo
+- `profile.ts` — sobre, contactos, CV, SEO
+- `projects.ts` — projectos
+- `experience.ts` — percurso
+- `skills.ts` — competências
+- `competitions.ts` — competições
+- `gallery.ts` — galeria
+- `ui.ts` — textos de interface
 
-Todo o conteudo principal esta em [src/app/page.tsx](src/app/page.tsx).
-Os estilos globais estao em [src/app/globals.css](src/app/globals.css).
+## Fotos
 
-## Licenca
+As fotos são lidas das pastas durante o build. Não é preciso listá-las no código:
 
-Uso pessoal. Para reutilizacao parcial, ajuste o conteudo e as referencias.
+- `public/images/gallery/<evento>/` — fotos de cada evento da galeria
+- `public/images/projects/<projecto>/` — screenshots de cada projecto
+
+Para adicionar ou remover fotos, basta pôr ou tirar ficheiros da pasta e fazer build.
+A primeira foto (capa) é a chamada `cover.*`, ou a indicada em `cover` no conteúdo; as restantes seguem a ordem do nome (1, 2, 10…).
+Sem fotos, o card mostra uma capa gerada com o título.
+
+Fotos directas do telemóvel (HEIC, muito grandes): corre `npm run images` antes do build.
+Converte para JPG, reduz para 1600px, aplica a rotação e remove metadados (incluindo GPS).
+Os originais ficam guardados em `originals/` (fora do site e do git).
+
+## Licença
+
+Uso pessoal.

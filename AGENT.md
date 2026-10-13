@@ -2,138 +2,104 @@
 
 > Lê este ficheiro **sempre** que recebes um novo prompt do Victor antes de qualquer acção.
 > Actualiza este ficheiro sempre que fizeres mudanças significativas ao projecto.
+> A especificação completa do redesign está em `portfolio-redesign.md`.
 
 ---
 
-## 🗂️ Projecto
+## Projecto
 
-**Tipo:** Next.js 14 (App Router) + TypeScript  
-**Localização:** `/home/vleonlel/Documents/Portfolio`  
-**Dono:** Victor Kangombe — Backend Engineer (Java, Node.js, DevOps)  
-**Repo GitHub:** https://github.com/leonel-the13  
-**LinkedIn:** https://linkedin.com/in/victor-kangombe/  
-**Email:** vicor32leonel@gmail.com  
+**Tipo:** Next.js 16 (App Router) + TypeScript + Tailwind CSS v4 + Framer Motion, export estático (`out/`)
+**Dono:** Victor Kangombe — Engenheiro de Software | Infraestrutura e Segurança da Informação
+**Domínio:** https://victor-kangombe.me
+**Referência visual:** https://rsambing.me
+**GitHub:** https://github.com/leonel-the13 · **LinkedIn:** https://linkedin.com/in/victor-kangombe · **Email:** vicor32leonel@gmail.com
 
 ---
 
-## 🗃️ Estrutura de Ficheiros
+## Regra principal
+
+**Todo o texto vem de `src/content/`.** Os componentes não têm texto escrito à mão. Para actualizar o site, edita só `src/content/`:
+
+| Ficheiro | Conteúdo |
+|---|---|
+| `profile.ts` | Nome, cargo, sobre, cards de foco, idiomas, contactos, CV, SEO, `site.url` |
+| `projects.ts` | Projectos, categorias, projecto em destaque (`featuredProjectSlug`) |
+| `skills.ts` | 6 categorias de competências |
+| `experience.ts` | Timeline do Percurso (experiência e formação) |
+| `competitions.ts` | Competições + equipas |
+| `gallery.ts` | Eventos da galeria e as fotos de cada um |
+| `ui.ts` | Textos de interface (navegação, botões, títulos) |
+
+Texto traduzido usa `{ pt, en }`. Nomes próprios ficam como string simples.
+Se faltar informação, deixa `// TODO(victor): ...` em vez de inventar.
+
+---
+
+## Rotas
+
+| Rota | Ficheiro |
+|---|---|
+| `/` | `src/app/(root)/page.tsx` — redirecciona para `/pt/` ou `/en/` |
+| `/[locale]` | Home: hero, sobre, destaque, competências, competições, contacto |
+| `/[locale]/projects` e `/[locale]/projects/[slug]` | Lista e detalhe de projectos |
+| `/[locale]/path` | Percurso (timeline de experiência e formação) |
+| `/[locale]/gallery` e `/[locale]/gallery/[slug]` | Galeria e fotos de cada evento (lightbox) |
+
+Há dois root layouts: `(root)/layout.tsx` (só o redirect) e `[locale]/layout.tsx` (site).
+Artigos: desligado (`site.showArticles = false`), ainda sem rota.
+
+---
+
+## Componentes (`src/components/`)
+
+`ui.tsx` (SectionLabel, SectionHeader, Tag, TagList, ButtonLink), `Header`, `Footer`, `PageHeader`, `ProjectCard` (+ ProjectLinks), `TimelineItem`, `SkillGroup`, `CompetitionCard`, `PhotoGallery` (grelha + lightbox), `SmartImage` (imagem ou placeholder), `Reveal` (fade-in ao fazer scroll), `icons.tsx`.
+
+Efeitos (`src/components/effects/`): `DecryptText` (títulos decifram-se ao entrar no ecrã), `TypeText` (escrita letra a letra no hero), `CountUp` (números), `GlobalEffects` (barra de progresso de scroll, spotlight nos cards com a classe `.spotlight`, assinatura na consola). `SessionTerminal` mostra dados da sessão do visitante, calculados só no browser. `Marquee` é a faixa de tecnologias. A transição entre páginas está em `src/app/[locale]/template.tsx` (CSS). Todas as animações respeitam `prefers-reduced-motion`.
+
+`src/lib/assets.ts` lê as fotos das pastas no build (`galleryImages`, `projectImages`): **as fotos não se listam no conteúdo**, vêm de `public/images/gallery/<slug>/` e `public/images/projects/<slug>/`. Sem fotos, `SmartImage` gera uma capa com o título. O lightbox (`PhotoGallery`) é renderizado num portal em `<body>`. `npm run images` prepara fotos novas (HEIC → JPG, 1600px, sem EXIF/GPS).
+
+---
+
+## Design system (`src/app/globals.css`)
+
+- Tema escuro por defeito, tema claro opcional (`data-theme` no `<html>`, guardado em `localStorage`).
+- Tokens RGB em `:root`: `--background`, `--foreground`, `--muted`, `--secondary`, `--border`, `--accent` (#3B82F6), `--accent-strong`, `--accent-soft`. Usados como `bg-background`, `text-muted`, `border-accent/40`, etc.
+- Fontes: Bebas Neue (`font-display`, títulos em maiúsculas), Archivo (texto), JetBrains Mono (`font-label`, etiquetas em maiúsculas).
+- Cantos rectos, bordas de 1px, sem sombras pesadas. Etiquetas no formato `[ 01 / SOBRE ]`.
+
+---
+
+## Imagens
 
 ```
-Portfolio/
-├── src/app/
-│   ├── page.tsx        ← Componente principal (1 único ficheiro, ~1100 linhas)
-│   └── globals.css     ← Todos os estilos (~1094 linhas, CSS puro com tokens)
-├── public/
-│   ├── victor.jpg              ← Foto de perfil
-│   ├── ea9e27d6-...JPG         ← Foto do nav avatar
-│   ├── victor-resume-en.pdf
-│   ├── projects/
-│   │   ├── black-hole-academy/ ← cover.png + 6 imagens JPG/JPEG
-│   │   ├── cesta-digital/      ← cover.png apenas
-│   │   ├── tourism-map/        ← cover.png apenas
-│   │   ├── inception/          ← cover.png apenas
-│   │   ├── webserver/          ← cover.png apenas
-│   │   └── born2beroot/        ← cover.png apenas
-│   └── hackathons/
-│       ├── africell-code-fast/ ← cover.JPEG + 5 imagens
-│       ├── angotic2026/        ← cover.jpeg + 4 imagens (IMG_8664, IMG_9610, IMG_9614, IMG_9615)
-│       ├── hackathon-ostja/    ← cover.jpg + 4 imagens (IMG_8639, IMG_8640, CB8DB85C, Screenshot)
-│       ├── isptec-programming/ ← cover.jpg apenas
-│       └── nasa-space-apps/    ← cover.png + 3 imagens (IMG_5767, IMG_5783, 8080748F)
+public/images/profile.jpg            foto (hero)
+public/images/og-cover.png           1200×630 (gerada a partir da foto)
+public/images/projects/<slug>/       screenshots de cada projecto
+public/images/gallery/<slug>/        fotos de cada evento
+public/images/competitions/          imagens de competições sem pasta de galeria (cyber-drill.jpg)
+originals/images/...                  fotos originais em alta resolução (fora do site, no .gitignore)
+public/cv/Victor-Kangombe-CV-PT.pdf  (o EN ainda não existe; o botão CV em inglês usa o PT)
 ```
 
 ---
 
-## 🎨 Design System (globals.css)
+## Histórico
 
-**Paleta:**
-- Fundo: `#0b0f1a` (deep), `#101624` (primary), `#141a2e` (card)
-- Accent: `#38bdf8` (azul cyan)
-- Texto: `#e2e8f0` (primary), `#94a3c2` (secondary), `#64748b` (tertiary)
-- Accent-green: `#34d399`, Accent-amber: `#fbbf24`, Accent-rose: `#f472b6`
+### 2026-10-13 — Redesign completo
+- Single-page substituído por site multi-página bilingue (PT/EN) inspirado em rsambing.me.
+- Novo posicionamento: Infraestrutura e Segurança da Informação. Adicionados experiência (C Software & Solutions), Cyber Drill, Laboratório de Cibersegurança e de Monitorização.
+- Conteúdo movido para `src/content/`; imagens reorganizadas em `public/images/`.
+- SEO: metadados por página, hreflang, Open Graph, `sitemap.xml`, `robots.txt`, favicon "VK".
 
-**Fontes:** Inter (sans), JetBrains Mono (mono)  
-**Radius:** sm=8px, md=12px, lg=16px, xl=20px  
-**Header height:** 64px  
+### 2026-10-13 — Animações e detalhes de cibersegurança
+- Foto do hero mais nítida (degradês só nas margens), mira à volta do rosto e linha de scan.
+- Terminal `recon.sh` com dados da sessão do visitante (inspirado em lrafael.tech), estatísticas calculadas dos dados, faixa de tecnologias, títulos com efeito decrypt, spotlight nos cards, barra de progresso, transição entre páginas, estado "sistemas operacionais" no footer.
+- Fotos novas do Cyber Drill e do FTL Tourism Hackathon convertidas (HEIC → JPG, máx. 1600px, sem EXIF/GPS); originais em `originals/`.
+- CV PT novo em `public/cv/`; o CV EN antigo (posicionamento "Backend Engineer") foi removido.
 
----
-
-## 🧩 Componentes em page.tsx
-
-| Componente | Descrição |
-|---|---|
-| `ProjectCarousel` | Carousel automático (5s), dots + nav buttons, fade transition |
-| `HackathonModal` | Modal com carousel e dots indicator, equipa, meta |
-| `ProjectDrawer` | Painel lateral que surge do lado direito com carousel de imagens, stack, função, desafios e resultados do projecto |
-| `Home` (main) | Componente principal, renderiza tudo |
-
-**Sections:** Hero → About → Skills → Projects → Hackathons → Contact
-
----
-
-## 📦 Dados — PROJECTS array
-
-| Nome | Imagens | GitHub |
-|---|---|---|
-| Black Hole Academy | cover.png + 6 JPGs | — |
-| Cesta Digital | cover.png | — |
-| Accessible Tourism Map | cover.png | https://github.com/leonel-the13/MTA |
-| Inception | cover.png | https://github.com/leonel-the13/inseption |
-| Webserver | cover.png | — |
-| Born2beroot | cover.png | — |
-
----
-
-## 🏆 Dados — HACKATHONS array
-
-| Hackathon | Posição | Galeria | Team |
-|---|---|---|---|
-| Hackathon OSTJA | 🥇 1st (Gold) | 5 imagens | Team (6 pessoas) |
-| ANGOTIC 2026 | 🥈 2nd (Silver) | 5 imagens | Team (3 pessoas) |
-| Africell Code Fast | 🥈 2nd (Silver) | 6 imagens | Solo |
-| NASA Space Apps | 🥉 3rd (Bronze) | 4 imagens | Team (6 pessoas) |
-| ISPTEC Programming | 🥉 3rd (Bronze) | 1 imagem | Team (3 pessoas) |
-
----
-
-## 🤝 Membros de Equipa Recorrentes
-
-| Nome | LinkedIn |
-|---|---|
-| Joisson Miguel | https://www.linkedin.com/in/joisson-miguel |
-| Oriza Ebo | https://www.linkedin.com/in/orisa-melzira-ebo-aab95a267 |
-| Reinaldo Sambing | https://www.linkedin.com/in/rsambing |
-| Jorge Carvalho | https://www.linkedin.com/in/jorge-de-carvalho-366899333|
-| Willfredy Vieira Dias | https://www.linkedin.com/in/willfredy-vieira-dias |
-| Jessé Inglês | https://www.linkedin.com/in/jess%C3%A9ingl%C3%AAs |
-| Sebastião Sukuakueche | https://www.linkedin.com/in/sebastiao-sukuakueche |
-| Ângela Amaro | https://www.linkedin.com/in/angeamaro |
-| Paulo Gaspar | https://www.linkedin.com/in/opaulogaspar |
-| Nuno Mendes | https://www.linkedin.com/in/nuno-mendes-07a259253 |
-
----
-
-## 📝 Histórico de Mudanças
-
-### 2026-07-10 (Sessão 1)
-- Adicionadas todas as imagens disponíveis nos arrays `images[]` dos projetos
-- Populados todos os `gallery[]` dos hackathons com imagens existentes
-
-### 2026-07-10 (Sessão 2) — CONCLUÍDO
-- Criado `AGENT.md` e `task.md`.
-- Adicionado hackathon ANGOTIC 2026 (2º lugar, Nacional, 3 membros: Victor, Joisson, Jorge)
-- Implementadas transições de crossfade suaves no `ProjectCarousel` e no `HackathonImageCarousel` via Framer Motion.
-- Adicionado auto-rotate nos cards dos hackathons.
-- Redesenhado Hero layout para modelo de duas colunas (Split columns) com badges flutuantes e stats em formato de cards.
-- Implementado Project detail drawer lateral, ativado ao clicar num card de projecto.
-- Atualizado HackathonModal com slideshow interactivo com dots e setas de navegação.
-- Adicionado efeitos de hover glow personalizados na lista de Skills (corresponde a cor de cada tecnologia simples-icons), barra de progresso de scroll no topo da página e borda animada (hue-gradient rotation) na foto de perfil da secção About.
-
----
-
-## ⚠️ Notas Importantes
-
-1. **Um único ficheiro:** Todo o código está em `src/app/page.tsx` — evitar dividir sem instrução do Victor
-2. **CSS puro:** Não usar Tailwind inline mesmo que já esteja importado no topo do CSS
-3. **Framer Motion:** Agora utilizado para carousels com `AnimatePresence`.
-
+### 2026-10-13 — Fotos dinâmicas, Percurso completo, correcção do lightbox
+- Fotos lidas das pastas no build; capas geradas quando não há imagens; `npm run images` para preparar fotos novas.
+- Lightbox em portal (antes abria fora do ecrã por causa da animação de página com `fill-mode: both`, e a página parecia congelada).
+- Percurso: Ensino Médio (Pim Pam Pum, 2020), ISPTEC (2022), 42 Common Core, CSS (2026), 42 Advanced DevOps & Security (2026).
+- ISPTEC Programação passou a 2024; FTL Tourism Hackathon como "Finalista" (bootcamp sem ranking).
+- Percurso só com experiência e formação (competições ficam na home e na galeria).
