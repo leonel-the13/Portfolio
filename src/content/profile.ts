@@ -97,7 +97,6 @@ export const profile = {
   /** CV por idioma. Se o PDF de um idioma não existir, o site usa o outro. */
   cv: {
     pt: "/cv/Victor-Kangombe-CV-PT.pdf",
-    // TODO(victor): adicionar public/cv/Victor-Kangombe-CV-EN.pdf (até lá, o site usa o PT)
     en: "/cv/Victor-Kangombe-CV-EN.pdf",
   } as L,
 
